@@ -1,0 +1,494 @@
+*::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: hsla(0, 0%, 15%, 1);
+  /* font-size: clamp(12px, 3vmax, 1.6rem); */
+}
+
+h1 {
+  display: inline;
+}
+
+/* Hauptgrid */
+.dashboard {
+  display: grid;
+  grid-template-columns: 13rem 2fr 17rem;
+  /* Sidebar, Main Content (Mitte), Rechte Spalte */
+  grid-template-rows: auto auto auto;
+  /* Zeilen für Header, Main und Footer */
+  grid-template-areas:
+    "sidebar header profil"
+    "sidebar main profil"
+    "sidebar footer profil";
+  /* gap: 1rem; */
+  /* background-color: #1e1e1e; */
+  color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+/* Fixierte Sidebar */
+.sidebar {
+  grid-area: sidebar;
+  position: sticky;
+  top: 0;
+  /* Festgelegte Breite für die Sidebar */
+  height: 100vh;
+  /* Volle Höhe des Viewports */
+  padding: 1rem;
+  overflow-y: auto;
+  /* Scrollbar für Inhalte, die nicht in die Sidebar passen */
+  max-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(180deg, hsla(0, 0%, 13%, 1), hsla(0, 0%, 15%, 1));
+  box-shadow: 0rem 0 3rem hsla(0, 0%, 12%, 1);
+  z-index: 2;
+}
+
+/* Fixierter profil-Bereich */
+.profil {
+  grid-area: profil;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  justify-content: center;
+  background: linear-gradient(180deg, hsla(0, 0%, 13%, 1), hsla(0, 0%, 15%, 1));
+  box-shadow: 0rem 0 3rem hsla(0, 0%, 12%, 1);
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 100vh;
+  z-index: 2;
+}
+
+.header {
+  grid-area: header;
+  background-color: hsla(0, 0%, 15%, 1);
+  padding: 1rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  /* margin-bottom: 1rem; */
+  height: 5rem;
+  z-index: 1;
+  left: 0;
+  min-width: 100%;
+  /* gap: 2%; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  /* margin-left: -5vw; */
+  box-shadow: 0 0px 3px #aaa;
+}
+
+.header div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+
+.header div img {
+  width: 1.15rem;
+  height: auto;
+}
+
+footer {
+  grid-area: footer;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+footer img {
+  animation: loading 4s ease 0s infinite;
+  height: 3rem;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#searchText {
+  display: inline-flex;
+  padding: .6rem 1.7rem .6rem .6rem;
+  width: 12rem;
+  max-width: 30rem;
+  background: var(--input-background);
+  border-radius: 800px;
+  margin: .2rem 0;
+  position: relative;
+  background-color: #f5f5f5;
+  color: #000;
+  border: none;
+}
+
+.lupe {
+  right: .4rem;
+  z-index: 3;
+  height: 1.5rem;
+  position: absolute;
+}
+
+.main {
+  grid-area: main;
+  display: grid;
+  /* Inneres Grid für den Main-Bereich */
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  /* Mindestens 18rem, sonst eine Spalte */
+  grid-auto-rows: minmax(150px, auto);
+  /* Automatische Zeilenhöhe */
+  padding: 1rem;
+  gap: 1rem;
+  overflow: auto;
+  margin-top: 0rem;
+  scroll-snap-type: y mandatory;
+  overflow-x: hidden;
+}
+
+.card {
+  border-radius: 10px;
+  padding: 2%;
+  scroll-snap-align: start;
+  scroll-margin-top: 1rem;
+}
+
+/* Standard-Zeilen: Links 60%, Rechts 40% */
+.main .card:nth-child(2n+1) {
+  width: 80%;
+  background-color: #4a90e2;
+  color: white;
+  text-align: center;
+}
+
+/* Alternierende Zeilen: Links 40%, Rechts 60% */
+.main .card:nth-child(2n+2) {
+  width: 116%;
+  margin-left: -18%;
+  background-color: #333;
+  color: white;
+  text-align: center;
+}
+
+.main .card:nth-child(4n+1) {
+  width: 116% !important;
+  background-color: #b71414;
+  color: white;
+  text-align: center;
+}
+
+.main .card:nth-child(4n+2) {
+  width: 80% !important;
+  margin-left: 18%;
+  background-color: #9fb714;
+  color: white;
+  text-align: center;
+}
+
+.footer {
+  grid-area: footer;
+  background-color: #d0021b;
+  padding: 1rem;
+  text-align: center;
+  position: fixed;
+}
+
+
+@media (max-width: 65rem) {
+  /* Die Dashboard-Struktur in einen horizontalen Scrollbereich umwandeln */
+
+  .dashboard {
+    grid-template-columns: 100vw 100vw 100vw;
+    scroll-snap-type: x mandatory;
+    /* Aktiviert horizontalen Scroll-Snap */
+    overflow-x: auto;
+  }
+
+  /* Bereiche mit Scroll-Snap und Vollbild-Breite */
+  .sidebar, .main, .profil {
+    scroll-snap-align: start;
+    min-width: calc(100vw - 0rem);
+    max-width: calc(100vw - 0rem);
+    /* Jeder Bereich nimmt die volle Breite des Bildschirms ein */
+    height: 100vh;
+    /* Volle Höhe des Bildschirms */
+    overflow-y: auto;
+    /* Vertikales Scrollen innerhalb der einzelnen Bereiche */
+    position: relative;
+  }
+}
+
+.filterContainer {
+  max-width: 15rem;
+}
+
+.filter {
+  padding: 1rem;
+  background-color: hsla(0, 0%, 21%, 1);
+  border-radius: 1rem;
+}
+
+.filterButton {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: .5rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #2d2d2d;
+  border-radius: 2rem;
+  margin-bottom: 2.5rem;
+  border: 1px outset transparent;
+}
+
+.filterButton:hover {
+  border: 1px inset white;
+}
+
+.filterButton img {
+  height: 1.2rem;
+}
+
+.filterGroup {
+  transition: filter 0.3s ease;
+
+}
+
+.filterGroup label img {
+  transition: filter 0.3s ease;
+  max-height: 2rem;
+}
+
+.filterGroup label:hover {
+  filter: brightness(1.5);
+  cursor: pointer;
+}
+
+.filter>p {
+  width: 100%;
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.filterApply>button {}
+
+.filterGroup {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.filterGroup img {
+  width: 2em;
+  height: auto
+}
+
+.filterGroup input[type="checkbox"] {
+  display: none;
+}
+
+.filterGroup input[type="checkbox"]:checked+label {
+  filter: brightness(1.2) hue-rotate(-64deg);
+}
+
+/* Reset basic styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Profil-Bild und Name */
+.profile-header {
+  position: relative;
+  text-align: center;
+}
+
+.profile-picture {
+  width: 50%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.badge {
+  position: absolute;
+  top: 6rem;
+  right: 3.4rem;
+  background-color: hsla(33, 93%, 54%, 1);
+  color: white;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 0.8em;
+}
+
+.profile-header h2 {
+  margin-top: 1.5rem;
+  font-size: 1.4em;
+}
+
+.username {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+/* Statistiken */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background-color: hsla(0, 0%, 21%, 1);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0.5rem 0.5rem 1rem #252525;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat span {
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+}
+
+.stat p {
+  color: #aaa;
+  font-size: 0.8em;
+}
+
+/* Menü */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  background-color: hsla(0, 0%, 15%, 1);
+  border-radius: 8px;
+  padding: 10px;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.menu-item:hover {
+  filter: drop-shadow(0 0 0.3rem #81c0ff);
+  border: 2px solid #badcff !important;
+  cursor: pointer;
+}
+
+.menu-item p {
+  margin-left: 10px;
+}
+
+.menu-item .icon {
+  font-size: 1.2em;
+}
+
+.menu-item.active {
+  border: 2px solid #4a90e2;
+  filter: drop-shadow(0 0 0.3rem #4a90e2);
+}
+
+.notification-badge {
+  position: absolute;
+  right: 10px;
+  background-color: hsla(33, 93%, 54%, 1);
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.8em;
+}
+
+/* Bottom-Icons */
+.bottom-icons {
+  display: flex;
+  justify-content: space-between;
+  /* padding: 10px 0; */
+  flex-direction: column;
+  align-items: center;
+}
+
+.group-icon {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.icon-add {
+  border: .2rem solid;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.icon-add:hover, .icon-group:hover {
+  filter: brightness(2) drop-shadow(0 0 0.5rem #000000);
+  cursor: pointer;
+}
+
+.icon {
+  width: 1.3rem;
+  height: auto;
+}
+
+.icon.settings {
+  font-size: 1.2em;
+}
+
+.offline {
+  background-color: red;
+  color: #000;
+  font-weight: bold;
+  padding: 0.2rem 1rem;
+  border-radius: .5rem;
+}
+
+.none {
+  display: none;
+}
+
+#profil-login a {
+  display: block;
+  padding: 1rem;
+  background: rgb(41, 132, 212);
+  border-radius: 66px;
+  width: 7rem;
+  text-align: center;
+  color: #fff;
+}
+#profil-login a:hover{
+  cursor: pointer;
+}
+#profil-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  gap: 2rem;
+  height: 100vh;
+}

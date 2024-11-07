@@ -6,7 +6,8 @@ include 'phpheader.php';
 
 <head>
     <link rel="stylesheet" href="css/register.css?<?php echo filemtime('css/register.css'); ?>" media="all" rel="preload">
-    <script src="js/register.js?<?php echo filemtime('js/register.js'); ?>" defer></script>
+    <script src="js/register/confirmLoginRegister.js?<?php echo filemtime('js/register/confirmLoginRegister.js'); ?>" defer></script>
+    <script src="js/register/register.js?<?php echo filemtime('js/register/register.js'); ?>" defer></script>
     <!-- <script src="js/sw_instal.min.js" defer></script> -->
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -44,7 +45,8 @@ include 'phpheader.php';
         </div>
         <div class="input-field">
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required class="input-text"></input>
-        </div>
+            <label id="validationMessage" for="password"></label>
+            </div>
 
         <input class="button" type="submit" name="registrieren" value="Registrieren">
 

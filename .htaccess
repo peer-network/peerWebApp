@@ -8,11 +8,23 @@ AddCharset UTF-8 .xml
 AddCharset UTF-8 .svg
 DefaultLanguage de-De
 <IfModule mod_headers.c>
+
+Header add Cross-Origin-Embedder-Policy "require-corp"
+Header add Cross-Origin-Opener-Policy "same-origin"
+Header set Access-Control-Allow-Methods "GET,PUT,POST,DELETE"
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+Header set Access-Control-Max-Age "600"
+# <FilesMatch "\.(js)$">
+Header set Access-Control-Allow-Origin "*"
+# </FilesMatch>
+        # SetEnvIf Origin "http(s)?://(www\.)?(getpeer.eu/graphql)$" AccessControlAllowOrigin=$0
+        # Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+        # Header merge Vary Origin
 Header always set Permissions-Policy "camera=(self), geolocation=(self), microphone=(self), fullscreen=(self), autoplay=(self)"
 Header always set Referrer-Policy "no-referrer"
 Header always edit Set-Cookie (.*) "$1; SameSite=strict"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
-Header set Content-Security-Policy "default-src 'self';style-src 'self';img-src https: 'self' data:;media-src https: 'self' data: blob:;worker-src 'self' about:;connect-src 'self' https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:;base-uri 'self';frame-ancestors 'self';form-action 'self'"
+Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' data: blob:; worker-src 'self' about:; connect-src 'self' https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
 
 <FilesMatch "(pdo.php|php.ini|backup.php)">
 Deny from all
@@ -37,12 +49,11 @@ Header unset Content-Security-Policy
 Header unset X-Content-Security-Policy
 Header unset X-WebKit-CSP
 </FilesMatch>
-Header merge Cache-Control immutable
 <FilesMatch "\.(ico|xml)$">
 Header edit Cache-Control immutable ""
 </FilesMatch>
-Header edit Cache-Control must-revalidate ""
-Header edit Cache-Control no-store ""
+# Header edit Cache-Control must-revalidate ""
+# Header edit Cache-Control no-store ""
 </IfModule>
 
 # RewriteEngine On 
@@ -130,6 +141,7 @@ AddCharset utf-8 .appcache \
 .js \
 .json \
 .manifest \
+.svg \
 .map \
 .mjs \
 .rdf \

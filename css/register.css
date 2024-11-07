@@ -19,6 +19,7 @@
         --text-color: hsl(0, 0%, 15%);
     }
 }
+
 /* Schriftart lokal im CSS einbinden */
 @font-face {
     font-family: 'Poppins';
@@ -144,9 +145,29 @@ body {
     text-align: center;
     max-width: 18rem;
 }
-.br{
+
+.br {
     min-height: .6rem;
 }
+
+@layer base {
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        background-color: transparent !important;
+        -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+        -webkit-text-fill-color: #000 !important;
+        transition: background-color 5000s ease-in-out 0s;
+        font-size: .8rem !important;
+    }
+}
+
 .input-field {
     display: flex;
     padding: .6rem;
@@ -155,6 +176,7 @@ body {
     background: var(--input-background);
     border-radius: 800px;
     margin: .2rem 0;
+    position: relative;
 }
 
 .input-text {
@@ -163,8 +185,11 @@ body {
     color: var(--input-textcolor);
     width: 100%;
     border: none;
-    background-color: transparent;
+    background-color: transparent !important;
+    caret-color: #000;
 }
+
+
 
 .button {
     width: calc(80% + 1.2rem);
@@ -242,8 +267,10 @@ body::-webkit-scrollbar {
     background-position: center;
     background-repeat: no-repeat;
 }
-.screen img{
-    width: 100%; /* or any custom size */
+
+.screen img {
+    width: 100%;
+    /* or any custom size */
     height: 100%;
     object-fit: cover;
 }
@@ -279,31 +306,124 @@ body::-webkit-scrollbar {
     width: 100%;
     height: auto;
 }
+
+.vector {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .auth {
+    position: relative;
     display: flex;
     align-items: center;
-}
-.login-button{
-    background: whitesmoke;
-    /* padding: 8%; */
-    width: 13vmin;
-    height: 13vmin;
-    border-radius: 50%;
-    display: flex;
+    /* align-self: center; */
+    width: 8rem;
+    margin: 2rem;
     justify-content: center;
-    align-items: center;
-    overflow: visible;
+    /* align-content: center; */
+    /* flex-direction: row; */
+    /* height: 4rem; */
 }
-.login-button img{
-    width: 60%;
+
+.buttons {
+    width: 105%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    position: absolute;
+    left: -3%;
+    top: 0;
+    align-items: center;
+}
+
+.buttons img {
+    width: 20%;
+    height: auto;
+    /* transform-origin: 50% 50%;
+    transform: scale(1.5) translateX(-0%); */
+}
+
+.buttons img:nth-child(3) {
+    transform: scale(.88) translate(4.2%, -5.8%);
+}
+
+/* .buttons img:nth-child(1){
+    margin-left: 0%;
+}
+.buttons img:nth-child(3){
+    margin-left: -4%;
+}
+.buttons img:nth-child(2){
+    margin-left: -4%;
+} */
+.buttons img:nth-child(3):hover {
+    filter: drop-shadow(0 0 24px #fff);
+    cursor: pointer;
+    animation: huhu3 1s ease 0s;
+    transform-origin: 50% 50%;
+}
+
+@keyframes huhu3 {
+    0% {
+        transform: scale(1.05) translate(4.2%, -5.8%);
+    }
+
+    25% {
+        transform: scale(.95) translate(4.2%, -5.8%);
+
+    }
+
+    75% {
+        transform: scale(1.07) translate(4.2%, -5.8%);
+    }
+
+    100% {
+        transform: scale(1) translate(4.2%, -5.8%);
+    }
+}
+
+.buttons img:hover {
+    filter: drop-shadow(0 0 24px #fff);
+    cursor: pointer;
+    animation: huhu 1s ease 0s;
+    transform-origin: 50% 50%;
+}
+
+@keyframes huhu {
+    0% {
+        transform: scale(1.05);
+    }
+
+    25% {
+        transform: scale(.95);
+
+    }
+
+    75% {
+        transform: scale(1.07);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.bubbles {
+    width: 100%;
     height: auto;
 }
+
 .line-with-text {
     display: flex;
     align-items: center;
     text-align: center;
     color: #333;
     margin: 20px 0;
+    width: 70%;
 }
 
 .line-with-text::before,
@@ -311,7 +431,7 @@ body::-webkit-scrollbar {
     content: '';
     flex: 1;
     border-bottom: 1px solid #ffffff;
-    width: 22vw;
+    /* width: 10vw; */
 }
 
 .line-with-text::before {
@@ -325,5 +445,50 @@ body::-webkit-scrollbar {
 .line-with-text span {
     font-weight: bold;
     padding: 0 10px;
-    color: #666;
+    color: var(--text-color);
+}
+
+label {
+    position: absolute;
+    top: 100%;
+    font-size: x-small;
+    left: 7%;
+    /* color: red; */
+    background: red;
+    width: 80%;
+    padding: 0;
+    border-radius: 0 0 6px 6px;
+    height: 0;
+    transition-property: height;
+    transition-duration: 1s;
+}
+
+#validationMessage {
+    color: red;
+    transition-property: color;
+    transition-duration: 1s;
+    transition-delay: .0s;
+}
+
+.notvalid {
+    color: #fff !important;
+    height: 2rem !important;
+    padding: 2% 3% !important;
+}
+
+input:focus+label {
+    display: none;
+}
+
+.valid {
+    border: 2px solid green;
+    background-color: #e0ffe0;
+    /* Hellgrüner Hintergrund */
+}
+
+/* Stil für ungültige E-Mail */
+.invalid {
+    border: 2px solid red;
+    background-color: #ffe0e0;
+    /* Hellroter Hintergrund */
 }
