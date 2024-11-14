@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "peer-cache-v1";
+const CACHE_NAME = "peer-cache-v6";
 
 // Dateiendungen, die gecacht werden sollen
 const fileExtensionsToCache = [
@@ -13,8 +13,8 @@ const fileExtensionsToCache = [
   ".js",
   ".css",
   ".json",
-  ".php",
-  ".woff2"
+  ".woff2",
+  ".php"
 ];
 
 // Installations-Ereignis: Basis-Assets cachen
@@ -62,7 +62,7 @@ self.addEventListener("activate", (event) => {
 // Fetch-Ereignis: Dynamisches Caching für bestimmte Dateitypen
 self.addEventListener("fetch", (event) => {
   const requestUrl = event.request.url;
-  if (event.request.method !== "GET") {
+  if (event.request.method !== "GET" ) {
     /* If we don't block the event as shown below, then the request will go to
            the network as usual.
         */
@@ -78,7 +78,7 @@ self.addEventListener("fetch", (event) => {
   const result = myString.substring(start, end === -1 ? myString.length : end);
 
   if (fileExtensionsToCache.some((extension) => result.endsWith(extension))) {
-    if (event.request.url.endsWith(".php")) {
+    if (event.request.url.endsWith(".php") || event.request.url.endsWith("sw.min.js")) {
       event.respondWith(
         fetch(event.request)
           .then(async (response) => {

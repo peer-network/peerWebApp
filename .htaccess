@@ -8,8 +8,8 @@ AddCharset UTF-8 .xml
 AddCharset UTF-8 .svg
 DefaultLanguage de-De
 <IfModule mod_headers.c>
-
-Header add Cross-Origin-Embedder-Policy "require-corp"
+Header add Cross-Origin-Resource-Policy: cross-origin
+Header add Cross-Origin-Embedder-Policy "credentialless"
 Header add Cross-Origin-Opener-Policy "same-origin"
 Header set Access-Control-Allow-Methods "GET,PUT,POST,DELETE"
 Header set Access-Control-Allow-Headers "Content-Type, Authorization"
@@ -24,7 +24,7 @@ Header always set Permissions-Policy "camera=(self), geolocation=(self), microph
 Header always set Referrer-Policy "no-referrer"
 Header always edit Set-Cookie (.*) "$1; SameSite=strict"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
-Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' data: blob:; worker-src 'self' about:; connect-src 'self' https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
+Header set Content-Security-Policy "default-src 'self'; style-src 'self'; img-src https: 'self' data:; media-src https: 'self' https://media.getpeer.eu/ data: blob:; worker-src 'self' about:; connect-src 'self' https://media.getpeer.eu https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
 
 <FilesMatch "(pdo.php|php.ini|backup.php)">
 Deny from all

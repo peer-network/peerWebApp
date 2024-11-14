@@ -1,5 +1,7 @@
 <?php 
-header("Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' data: blob:; worker-src 'self' about:; connect-src 'self' https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'");
+header("Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' https://media.getpeer.eu/ data: blob:; worker-src 'self' about:; connect-src 'self' https://media.getpeer.eu/ https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'");
+ini_set("session.cookie_httponly", 1);
+
 // https://getpeer.eu:8443/
 $me = substr($_SERVER["REQUEST_URI"],1);
 if(strpos($me, '/')!==false) $me = substr($me,strrpos($me, '/')+1);
