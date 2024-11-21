@@ -10,13 +10,13 @@ async function registerUser(email, password, username) {
             }
         }
     `;
-    // mutation Register {
-    //     register(input: { email: "hu@bu.de", password: "1234567oO#", username: "olli" }) {
-    //         status
-    //         ResponseCode
-    //         userid
-    //     }
-    // }
+  // mutation Register {
+  //     register(input: { email: "hu@bu.de", password: "1234567oO#", username: "olli" }) {
+  //         status
+  //         ResponseCode
+  //         userid
+  //     }
+  // }
   // Variablen, die an die Mutation übergeben werden (E-Mail, Passwort, Benutzername)
   const variables = {
     input: {
@@ -58,27 +58,9 @@ async function registerUser(email, password, username) {
       verifyUser2(result.data.register.userid);
     }
     // Fehler: Benutzername bereits vergeben
-    else if (result.data.register.errorMessage === "Username already taken") {
-      console.error(
-        "Fehler bei der Registrierung: Der Benutzername ist bereits vergeben."
-      );
-      alert(
-        "Der Benutzername ist bereits vergeben. Bitte wähle einen anderen Benutzernamen."
-      );
-    }
-    // Fehler: E-Mail bereits registriert
-    else if (result.data.register.errorMessage === "Email already registered") {
-      console.error(
-        "Fehler bei der Registrierung: Die E-Mailadresse wird bereits verwendet."
-      );
-      alert("Die E-Mailadresse wird bereits verwendet.");
-    }
-    // Allgemeiner Fehler
     else {
-      console.error(
-        "Fehler bei der Registrierung:",
-        result.data.register.errorMessage
-      );
+      Merror("Register failed", result.data.register.ResponseCode);
+      console.error("Register failed:" + result.data.register.ResponseCode);
     }
   } catch (error) {
     // Fehlerbehandlung bei Netzwerkfehlern oder anderen Problemen
@@ -104,19 +86,19 @@ document
 
     // Überprüfung, ob das Passwort die Mindestlänge erfüllt
     if (password.length < passwordMinLength) {
-      alert("Das Passwort muss mindestens 8 Zeichen lang sein!");
+      info("Das Passwort muss mindestens 8 Zeichen lang sein!");
       return;
     }
 
     // Überprüfung, ob das Passwort einen Großbuchstaben enthält
     if (!passwordRegex.test(password)) {
-      alert("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
+      info("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
       return;
     }
 
     // Überprüfung, ob die Passwörter übereinstimmen
     if (password !== confirmPassword) {
-      alert("Passwörter stimmen nicht überein!");
+      info("Passwörter stimmen nicht überein!");
       return;
     }
 
@@ -153,13 +135,11 @@ async function verifyUser2(userid) {
     .then((data) => {
       console.log("Mutation result:", data);
       // Ergebnis der Mutation verarbeiten
-      const { status, ResponseCode } =
-        data.data.verifiedAccount;
+      const { status, ResponseCode } = data.data.verifiedAccount;
       console.log("Status:", status);
       console.log("Error Message:", ResponseCode);
-      if(status === "success")
-      {
-        alert( "register successfull")
+      if (status === "success") {
+        info("register successfull");
         window.location.href = "/login.php";
       }
     })

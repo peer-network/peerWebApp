@@ -7,6 +7,7 @@ async function fetchHelloData(userid = null) {
     Authorization: `Bearer ${accessToken}`,
   });
 
+  
   let graphql = JSON.stringify({
     query: `query Hello {
             hello {
@@ -33,16 +34,21 @@ async function fetchHelloData(userid = null) {
                 issaved
             }
             profile(userid: ${userid}) {
-              affectedRows {
-                  username
-                  biography
-                  img
-                  amountfollower
-                  amountfollowed
-                  amountposts
-                  isfollowed
-                  isfollowing
-              }
+              status
+        ResponseCode
+        affectedRows {
+            id
+            username
+            slug
+            status
+            img
+            biography
+            amountfollower
+            amountfollowed
+            amountposts
+            isfollowed
+            isfollowing
+        }
             }
         }`,
     variables: {},

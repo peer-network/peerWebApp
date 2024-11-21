@@ -6,7 +6,9 @@ include 'phpheader.php';
 
 <head>
     <link rel="stylesheet" href="css/dashboard.css">
-    <script src="sw_instal.min.js" defer></script>
+    <link rel="stylesheet" href="css/modal.css">
+
+    <script src="sw_instal.min.js" async></script>
     <script src="js/lib.min.js?" defer></script>
     <script src="js/dashboard.js" defer></script>
 
@@ -33,71 +35,76 @@ include 'phpheader.php';
                     <path d="m28 37c-11.9 0-21.5-7.17-25.8-17.5 4.36-10.3 14-17.5 25.8-17.5s21.5 7.17 25.8 17.5c-4.36 10.3-14 17.5-25.8 17.5z" />
                 </g>
             </symbol>
-
+            <symbol id="multi" viewBox="0 0 100 100">
+                <g fill="none" stroke="#00bdff" stroke-linejoin="round" stroke-width="9">
+                    <rect x="10" y="10" width="65" height="65" />
+                    <rect x="25" y="25" width="65" height="65" />
+                </g>
+            </symbol>
         </svg>
     </header>
 
 
-    <article class="dashboard">
-        <header class="header">
-            <div>
-                <img src="svg/logo_sw.svg" alt="Peer Network Logo">
-                <h1 id="h1">Dashboard</h1>
-            </div>
-            <div class="search-group">
-                <input name="search" id="searchText" type="text" placeholder="Search for anything" aria-label="Search">
-                <img class="lupe" src="svg/lupe.svg" alt="search">
-            </div>
-            <div class="postOptions">
-                <div class="postOptionsButton" title="show trends">
-                    <span>Trendig</span><img src="svg/trending.svg" alt="trending">
+    <article id="dashboard" class="dashboard">
+        <header id="header">
+            <div id="DashboardHeader" class="header">
+                <div>
+                    <img src="svg/logo_sw.svg" alt="Peer Network Logo">
+                    <h1 id="h1">Dashboard</h1>
                 </div>
-                <div class="postOptionsButton" title="my followed">
-                    <span>Subscriptions</span><img src="svg/followed.svg" alt="followed">
+                <div class="search-group">
+                    <input name="search" id="searchText" type="text" placeholder="Search for anything" aria-label="Search">
+                    <img class="lupe" src="svg/lupe.svg" alt="search">
                 </div>
-                <div class="postOptionsButton" title="your friends like">
-                    <span>Friends</span><img src="svg/friends.svg" alt="friends">
+                <div class="postOptions">
+                    <div class="postOptionsButton" title="show trends">
+                        <span>Trendig</span><img src="svg/trending.svg" alt="trending">
+                    </div>
+                    <div class="postOptionsButton" title="my followed">
+                        <span>Subscriptions</span><img src="svg/followed.svg" alt="followed">
+                    </div>
+                    <div class="postOptionsButton" title="your friends like">
+                        <span>Friends</span><img src="svg/friends.svg" alt="friends">
+                    </div>
                 </div>
             </div>
         </header>
 
         <!-- Sidebar -->
         <aside class="sidebar">
-            <form class="filterContainer">
-
-
+            <form id="filter" class="filterContainer">
                 <menu class="filter">
                     <div class="center">
                         <img class="icon" src="svg/filterApply.svg" alt="apply Filter">&nbsp;apply filter
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterImage" type="checkbox" class="filterButton">
+                        <input checked id="filterImage" type="checkbox" name="image">
                         <label for="filterImage" class="filterButton" title="Fotos"><img src="svg/filterImage.svg" alt="Image filter"></label>
-                        <input checked id="filterNotes" type="checkbox" class="filterButton">
-                        <label for="filterNotes" class="filterButton" title="Notes"><img src="svg/filterNotes.svg" alt="Notes filter"></label>
-                        <input checked id="filterMusic" type="checkbox" class="filterButton">
-                        <label for="filterMusic" class="filterButton" title="Music"><img src="svg/filterMusic.svg" alt="Music filter"></label>
+                        <input checked id="filterNotes" type="checkbox" name="text">
+                        <label for="filterNotes" class="filterButton" title="Notes" name="notes"><img src="svg/filterNotes.svg" alt="Notes filter"></label>
+                        <input checked id="filterAdio" type="checkbox" name="audio">
+                        <label for="filterAdio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio filter"></label>
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterVideo" type="checkbox" class="filterButton">
+                        <input checked id="filterVideo" type="checkbox" name="video">
                         <label for="filterVideo" class="filterButton" title="Video"><img src="svg/filterVideo.svg" alt="Video filter"></label>
-                        <input checked id="filterPodcast" type="checkbox" class="filterButton">
+                        <input checked id="filterPodcast" type="checkbox" name="podcast">
                         <label for="filterPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast filter"></label>
-                        <input checked id="filterFickFuck" type="checkbox" class="filterButton">
+                        <input checked id="filterFickFuck" type="checkbox" name="local">
                         <label for="filterFickFuck" class="filterButton" title="local"><img src="svg/filterFickFuck.svg" alt="Local filter"></label>
                     </div>
                     <div class="filterGroup">
-                        <input checked id="filterPolls" class="filterButton" type="checkbox" class="filterButton">
+                        <input checked id="filterPolls" class="filterButton" type="checkbox" name="polls">
                         <label for="filterPolls" class="filterButton" title="Polls"><img src="svg/filterPolls.svg" alt="Polls filter"></label>
-                        <input checked id="filterQuiz" type="checkbox" class="filterButton">
+                        <input checked id="filterQuiz" type="checkbox" name="quiz">
                         <label for="filterQuiz" class="filterButton" title="Quiz"><img src="svg/filterQuiz.svg" alt="Quiz filter"></label>
-                        <input checked id="filterEvent" type="checkbox" class="filterButton">
+                        <input checked id="filterEvent" type="checkbox" name="event">
                         <label for="filterEvent" class="filterButton" title="Event"><img src="svg/filterEvent.svg" alt="Event filter"></label>
                     </div>
                 </menu>
                 <!-- <label for="advancedFilter" style="color: white;">advanced filter</label> -->
                 <select id="advancedFilter" class="dark-select">
-                    <option class="none" value="" disabled selected>advanced filter</option>
+                    <option class="none" name="" disabled selected>advanced filter</option>
                     <option value="1">was soll hier stehen?</option>
                     <option value="2">und wie siehts aus</option>
                     <option value="2">miau</option>
@@ -113,13 +120,13 @@ include 'phpheader.php';
                         <img class="icon" src="svg/free.svg">
                         <p>free&nbsp;content</p>
                     </div>
-
                 </div>
             </form>
         </aside>
 
         <!-- Main Content Area (Mittlere Spalte mit einem inneren Grid) -->
         <main id="main" class="main">
+
             <!-- <section class="card" tabindex="0">
                 <div class="post">
                     <img src="img/bg.png" alt="">
@@ -151,24 +158,24 @@ include 'phpheader.php';
             <div id="profil-container">
                 <!-- Profil-Bild und Name -->
                 <div class="profile-header">
-                    <img id="profilbild" src="img/ender.png" alt="Profile Picture" class="profile-picture">
-                    <div id="badge" class="badge">79</div>
-                    <h2 id="username">Julia Harrison</h2>
-                    <p class="username">@mc_juli_420</p>
+                    <img id="profilbild" src="svg/noname.svg" alt="Profile Picture" class="profile-picture">
+                    <div id="badge" class="badge"></div>
+                    <h2 id="username">logged out</h2>
+                    <p class="username">@unlicensed</p>
                 </div>
 
                 <!-- Statistiken -->
                 <div class="stats">
                     <div class="stat">
-                        <span id="userPosts">42</span>
+                        <span id="userPosts"></span>
                         <p>Posts</p>
                     </div>
                     <div class="stat">
-                        <span id="followers">6.9k</span>
+                        <span id="followers"></span>
                         <p>Followers</p>
                     </div>
                     <div class="stat">
-                        <span id="following">420</span>
+                        <span id="following"></span>
                         <p>Following</p>
                     </div>
                 </div>
@@ -194,7 +201,7 @@ include 'phpheader.php';
                     </div>
                     <!-- Bottom-Icons -->
                     <div class="bottom-icons">
-                        <div class="icon-add">
+                        <div id="btAddPost" class="icon-add">
                             <!-- <svg class="icon" width="100%" height="100%" viewBox="0 0 100 100">
                                 <g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="11">
                                     <path d="m50 10v80" />
@@ -205,7 +212,7 @@ include 'phpheader.php';
                         </div>
 
                     </div>
-                    <div class="group-icon">
+                    <div id="" class="group-icon">
                         <img class="icon icon-group" src="svg/icon-group.svg" alt="settings">
                     </div>
                 </div>
@@ -219,25 +226,46 @@ include 'phpheader.php';
             <img src="svg/logo_farbe.svg" alt="loading">
         </div>
     </article>
-    <div id="postView" class="none">
-        <div class="cImg">
-            
-            <div id="comment-title"></div>
-            <img id="comment-img" src="" alt="">
-            <div id="comment-text"></div>
-            <!-- <div class="shadow"></div> -->
-        </div>
-        <div id="comments" class="comments">
-            <div class="comment">
-                <div class="commentUser">
-                    <img src="img/ender.png" alt="user image">
-                    <span>ender</span>
+    <div id="overlay" class="none">
+        <div id="postView">
+            <div class="cImg">
+                <div id="comment-title"></div>
+                <div id="comment-img-container">
+                    <img id="comment-img" src="" alt="">
+
                 </div>
-                <p>kjascka kha  ac kha ckas ckahs cka ka ckaa cka cka ka cka ckha kha cak kh akhc aks </p>
-                <span class="commentDate" >datum</span>
-            </div> 
+                <div id="comment-text"></div>
+                <!-- <div class="shadow"></div> -->
+            </div>
+            <div id="comments" class="comments">
+                <div class="comment">
+                    <div class="commentUser">
+                        <img src="img/ender.png" alt="user image">
+                        <span>ender</span>
+                    </div>
+                    <p>kjascka kha ac kha ckas ckahs cka ka ckaa cka cka ka cka ckha kha cak kh akhc aks </p>
+                    <div>
+                        <span class="commentDate">datum</span>
+                    </div>
+                </div>
+            </div>
+            <div id="closeComments" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
         </div>
-        <div id="close"><img src="svg/plus2.svg" alt="close"></div>
+    </div>
+    <div id="addPost" class="none">
+        <form id="newPost" method="post">
+            <label for="bildueberschrift">Überschrift:</label>
+            <input type="text" id="bildueberschrift" name="text-input" maxlength="150" required>
+            <label for="bildbeschreibung">Beschreibung:</label>
+            <input type="text" id="bildbeschreibung" name="text-input" maxlength="150" required>
+            <div id="drop-area">
+                <p>Ziehe deine Bilder hierher oder klicke, um sie hochzuladen</p>
+                <input type="file" id="file-input" accept="image/*" hidden multiple />
+            </div>
+            <div id="preview-container"></div>
+            <button id="createPost">create</button>
+        </form>
+        <div id="closeAddPost" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
     </div>
 </body>
 

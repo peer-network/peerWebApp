@@ -1,4 +1,4 @@
-async function getPosts(offset, limit, fromDate = null, toDate = null) {
+async function getPosts(offset, limit, filter) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -8,41 +8,48 @@ async function getPosts(offset, limit, fromDate = null, toDate = null) {
   });
 
   var graphql = JSON.stringify({
-    query: `query Users {
-            getallposts(
-                offset: ${offset}
-                limit: ${limit}
-                from: "${fromDate}"
-                to: "${toDate}"
-                filterBy: null
-                sortBy: null
-                title: null
-            ) {
+    query: `query Getallposts {
+    getallposts(sortBy: "newest", limit: ${limit}, offset: ${offset}, filterBy: "${filter}") {
+        id
+        contenttype
+        title
+        media
+        mediadescription
+        createdat
+        amountlikes
+        amountviews
+        amountcomments
+        amountdislikes
+        isliked
+        isviewed
+        isreported
+        isdisliked
+        issaved
+        user {
+            id
+            username
+            img
+            isfollowed
+        }
+        comments {
+            commentid
+            userid
+            postid
+            parentid
+            content
+            amountlikes
+            isliked
+            createdat
+            user {
                 id
-                contenttype
-                title
-                media
-                mediadescription
-                amountlikes
-                amountviews
-                amountcomments
-                isliked
-                comments {
-                    commentid
-                    userid
-                    postid
-                    parentid
-                    content
-                    createdat
-                    user {
-                        id
-                        username
-                        img
-                        isfollowed
-                    }
-                }
+                username
+                img
+                isfollowed
             }
-        }`,
+        }
+    }
+}
+`,
     variables: {},
   });
 
@@ -64,7 +71,7 @@ async function getPosts(offset, limit, fromDate = null, toDate = null) {
       throw error;
     });
 }
-async function likePost(postid) {
+function likePost(postid) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -90,10 +97,21 @@ async function likePost(postid) {
     redirect: "follow",
   };
 
-  fetch("https://getpeer.eu/graphql", requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
+return fetch("https://getpeer.eu/graphql", requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+      if (result.data.likePost.status == "error") {
+        throw new Error(result.data.likePost.ResponseCode);
+      } else {
+        return true;
+      }
+    })
+    .catch((error) => {
+      Merror("Like failed", error);
+      console.log("error", error);
+      return false;
+    });
 }
 async function dislikePost(postid) {
   const accessToken = getCookie("authToken");
@@ -173,4 +191,77 @@ async function fetchPostData(postId) {
       console.error("Netzwerkfehler:", error);
       return null;
     });
+}
+async function sendCreatePost(variables) {
+  const url = "https://getpeer.eu/graphql"; // GraphQL-Endpunkt
+  const accessToken = getCookie("authToken");
+
+  if (!accessToken) {
+    throw new Error("Auth token is missing or invalid.");
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const query = `
+    mutation CreatePost($title: String!, $media: String!, $mediadescription: String!, $contenttype: String!) {
+      createPost(
+        input: {
+          title: $title
+          media: $media
+          mediadescription: $mediadescription
+          contenttype: $contenttype
+        }
+      ) {
+        status
+        ResponseCode
+        affectedRows {
+          postid
+          userid
+          title
+          media
+          mediadescription
+          contenttype
+        }
+      }
+    }
+  `;
+
+  // const variables = {
+  //   title,
+  //   media,
+  //   mediadescription,
+  //   contenttype,
+  // };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (result.errors) {
+      throw new Error(`GraphQL Error: ${JSON.stringify(result.errors)}`);
+    }
+    console.log("Mutation Result:", result.data);
+
+    if (result.data.createPost.status == "error") {
+      throw new Error(result.data.createPost.ResponseCode);
+    } else return result.data;
+  } catch (error) {
+    Merror("Create Post failed", error);
+    console.error("Error create Post:", error);
+    return false;
+  }
 }
