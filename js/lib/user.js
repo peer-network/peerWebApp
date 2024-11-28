@@ -10,31 +10,14 @@ async function fetchHelloData(userid = null) {
   
   let graphql = JSON.stringify({
     query: `query Hello {
-            hello {
-                root
-                args
-                context
-                currentuserid
-            }
-            post {
-                id
-                contenttype
-                title
-                media
-                mediadescription
-                createdat
-                amountlikes
-                amountviews
-                amountcomments
-                amountdislikes
-                isliked
-                isviewed
-                isreported
-                isdisliked
-                issaved
-            }
-            profile(userid: ${userid}) {
-              status
+      hello {
+          root
+          args
+          context
+          currentuserid
+      }
+      profile(userid: ${userid}) {
+        status
         ResponseCode
         affectedRows {
             id
@@ -49,8 +32,8 @@ async function fetchHelloData(userid = null) {
             isfollowed
             isfollowing
         }
-            }
-        }`,
+      }
+    }`,
     variables: {},
   });
 

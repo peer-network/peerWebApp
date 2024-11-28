@@ -226,46 +226,59 @@ include 'phpheader.php';
             <img src="svg/logo_farbe.svg" alt="loading">
         </div>
     </article>
-    <div id="overlay" class="none">
-        <div id="postView">
+    <div id="overlay" class="none ">
+        <div id="cardClicked" class="none">
             <div class="cImg">
                 <div id="comment-title"></div>
                 <div id="comment-img-container">
                     <img id="comment-img" src="" alt="">
-
                 </div>
                 <div id="comment-text"></div>
-                <!-- <div class="shadow"></div> -->
+                <div id="tags"></div>
+                <div id="postperformance"></div>
             </div>
-            <div id="comments" class="comments">
-                <div class="comment">
-                    <div class="commentUser">
-                        <img src="img/ender.png" alt="user image">
-                        <span>ender</span>
+            <div id="comments-container">
+                <div id="comments-header">
+                    <div id="mostliked"></div>
+                    <div class="commentsButtons">
+                        <div  class="postViews">
+                            <svg>
+                                <use href="#post-view" />
+                            </svg>
+                            <span id="postViews">234</span>
+                        </div>
+
+                        <div id="comments-buttons">
+                            <img src="svg/share.svg" class="postViews">
+                            <img src="svg/bookmark.svg" class="postViews">
+                        </div>
                     </div>
-                    <p>kjascka kha ac kha ckas ckahs cka ka ckaa cka cka ka cka ckha kha cak kh akhc aks </p>
-                    <div>
-                        <span class="commentDate">datum</span>
-                    </div>
+
                 </div>
+                <div id="comments" class="comments">
+
+                </div>
+
             </div>
+            <!-- <div id="addComments" class="icon-add"><img src="svg/plus2.svg" alt="add comment"></div> -->
             <div id="closeComments" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
         </div>
-    </div>
-    <div id="addPost" class="none">
-        <form id="newPost" method="post">
-            <label for="bildueberschrift">Überschrift:</label>
-            <input type="text" id="bildueberschrift" name="text-input" maxlength="150" required>
-            <label for="bildbeschreibung">Beschreibung:</label>
-            <input type="text" id="bildbeschreibung" name="text-input" maxlength="150" required>
-            <div id="drop-area">
-                <p>Ziehe deine Bilder hierher oder klicke, um sie hochzuladen</p>
-                <input type="file" id="file-input" accept="image/*" hidden multiple />
-            </div>
-            <div id="preview-container"></div>
-            <button id="createPost">create</button>
-        </form>
-        <div id="closeAddPost" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
+
+        <div id="addPost" class="none ">
+            <form id="newPost" class="" method="post">
+                <label for="bildueberschrift">Überschrift:</label>
+                <input type="text" id="bildueberschrift" name="text-input" maxlength="150" required>
+                <label for="bildbeschreibung">Beschreibung:</label>
+                <input type="text" id="bildbeschreibung" name="text-input" maxlength="150" required>
+                <div id="drop-area">
+                    <p>Ziehe deine Bilder hierher oder klicke, um sie hochzuladen</p>
+                    <input type="file" id="file-input" accept="image/*" hidden multiple />
+                </div>
+                <div id="preview-container" class="blockscroll"></div>
+                <button class="button" id="createPost">create</button>
+            </form>
+            <div id="closeAddPost" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
+        </div>
     </div>
 </body>
 

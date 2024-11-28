@@ -19,6 +19,17 @@
   --black: hsl(0, 0%, 0%);
   --white: hsl(0, 0%, 100%);
   --shadow-add: hsl(0, 0%, 51%);
+
+  --translate-x: 0px;
+  /* X-Verschiebung */
+  --translate-y: 0px;
+  /* Y-Verschiebung */
+  --scale: 1;
+  /* Zoom-Faktor */
+  --transform-origin-x: 50%;
+  /* Ursprung für das Zoomen (X) */
+  --transform-origin-y: 50%;
+  /* Ursprung für das Zoomen (Y) */
 }
 
 @media (prefers-color-scheme: light) {
@@ -295,7 +306,7 @@ h1 {
     display: none;
   }
 
-  #postView {
+  #cardClicked {
     width: 100vw !important;
     height: 100vh !important;
     grid-template-columns: 1fr !important;
@@ -307,13 +318,15 @@ h1 {
 
   .comments {
     width: 97% !important;
-    padding-top: 75vh;
+    padding-top: 50vh;
     grid-area: none !important;
+    margin-top: 30vh;
+    height: 69vh !important;
   }
 
   .comment {
     position: relative;
-    background: hsla(0, 0%, 100%, 0.6);
+    /* background: hsla(0, 0%, 100%, 0.6); */
     color: #000;
     padding: .3rem 1rem;
     border-radius: 1rem;
@@ -653,6 +666,23 @@ h1 {
   display: none !important;
 }
 
+.absolute {
+  height: auto;
+  cursor: grab;
+  transition: transform 0.1s ease-out;
+  /* Glatte Animation */
+  transform-origin: var(--transform-origin-x) var(--transform-origin-y);
+  transform: translate(var(--translate-x), var(--translate-y)) scale(var(--scale));
+  position: absolute !important;
+  /* top: var(--top, 0) !important;
+  left: var(--left, 0) !important; */
+  z-index: 10;
+  /* width: var(--width, 0) !important;
+  height: var(--height, 0) !important;
+  max-width: var(--width, 0) !important;
+  max-height: var(--height, 0) !important; */
+}
+
 #profil-login a, #newPost button {
   display: block;
   padding: 1rem;
@@ -661,10 +691,12 @@ h1 {
   width: 7rem;
   text-align: center;
   color: var(--text-color);
+  border: 1px solid #eee;
 }
 
 #profil-login a:hover, #newPost button:hover {
   cursor: pointer;
+  background: var(--button-hover);
 }
 
 #profil-login {
@@ -827,54 +859,69 @@ h1 {
 
 #postView {}
 
-.likeComment {
-  height: 2rem;
-  display: flex;
-  align-items: flex-end;
-}
-
-.likeComment svg {
-  height: 1.3rem;
-  width: 1.3rem;
-}
 
 .comment {
   position: relative;
-  background: hsla(0, 0%, 100%, 0.5);
-  color: #000;
+  /* background: hsla(0, 0%, 100%, 0.5); */
+  color: #ffffff;
   padding: .3rem 1rem;
   border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
+  display: grid;
+  grid-template-columns: 5rem auto 5rem;
+  grid-template-areas: "image name liked"
+    "image comment liked";
+}
+
+.likeComment svg {
+  fill: none;
+  stroke: #fff;
 }
 
 .commentUser {
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  /* padding: 0 1rem; */
-  margin: 1rem;
-  font-size: 1.5rem;
-  gap: 1rem;
-
+  font-weight: bold;
 }
 
-.commentUser img {
+.commentHeader {
+  grid-area: name;
+}
+
+.comment img {
+  grid-area: image;
   height: 100%;
   width: auto;
+  margin: 0;
 }
 
-.commentDate {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+.likeComment {
+  grid-area: liked;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: .5rem;
 }
+
+.likeComment svg {
+  height: 1.7rem;
+  width: 1.7rem;
+}
+
+.commentDate {}
 
 #overlay {
-  /* display: none; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  background-color: #4848487d;
+  backdrop-filter: blur(5px);
+  z-index: 2;
 }
 
-#postView {
+#cardClicked {
   width: 90vw;
   height: 90vh;
   left: 50%;
@@ -882,14 +929,15 @@ h1 {
   top: 50%;
   position: fixed;
   /* z-index: 5; */
-  display: grid !important;
+  display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-areas: "img comment";
   align-items: center;
   justify-items: center;
-  border-radius: 4rem;
+  border-radius: 2rem;
   box-shadow: 1rem 1rem 3rem black, 0 0 2rem black inset;
   background-color: var(--background-color);
+  backdrop-filter: blur(5px);
 }
 
 .postViewShow {
@@ -922,20 +970,17 @@ h1 {
 }
 
 #comment-img-container {
-  overflow-x: auto;
-  /* Ermöglicht horizontales Scrollen */
+  overflow-x: scroll;
   overflow-y: hidden;
-  /* Verhindert vertikales Scrollen */
   white-space: nowrap;
-  /* Elemente bleiben in einer Zeile */
-  scroll-behavior: smooth; /* Sanftes Scrollen */
+  /* scroll-behavior: smooth; */
   display: flex;
   grid-row: 2;
   /* box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000; */
   margin: auto;
   height: 50vh;
   max-height: 50vh;
-  scroll-snap-type: x mandatory;
+  /* scroll-snap-type: x mandatory; */
 }
 
 #comment-img-container img {
@@ -946,18 +991,72 @@ h1 {
   scroll-snap-align: start;
 }
 
+#comments-container {
+  grid-area: comment;
+  height: 94%;
+  max-height: 95%;
+  width: 95%;
+}
+
+#comments-header {
+  margin-bottom: 3rem;
+
+}
+
+.commentsButtons {
+  display: flex;
+  width: 95%;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+#mostliked {
+  display: flex;
+  align-items: center;
+  padding-left: 1.5rem;
+}
+
+#mostliked img, .comment img {
+  position: relative;
+  border-radius: 50%;
+  height: 4rem;
+  width: 4rem;
+  margin-left: -1.5rem;
+  border: 3px solid #111;
+}
+
+#mostliked span {
+  margin-left: 2rem;
+}
+
+#mostliked img:nth-of-type(1) {
+  z-index: 5;
+}
+
+#mostliked img:nth-of-type(2) {
+  z-index: 4;
+}
+
 .comments {
   /* top: -14%; */
-  position: absolute;
-  grid-area: comment;
-  /* border-radius: 1rem; */
-  height: 95%;
-  /* max-height: 95%; */
-  width: 85%;
+
   overflow: auto;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 2rem;
+}
+
+
+.postViews svg,#comments-buttons img {
+  height: 2rem;
+  width: 2rem;
+}
+
+#comments-buttons,.postViews {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 #comment-title {
@@ -975,6 +1074,23 @@ h1 {
 }
 
 .btClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  padding: .5rem;
+  transform: rotateZ(45deg);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 3rem;
+  height: auto;
+  cursor: pointer;
+}
+
+.btAdd {
   position: absolute;
   top: -0rem;
   right: -0rem;
@@ -1027,19 +1143,31 @@ h1 {
 }
 
 #preview-container {
+  padding-top: 1rem;
   margin-top: 20px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-y: visible;
   gap: 10px;
   align-items: flex-start;
+  overflow-x: scroll;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100vw;
 }
 
 .preview-item {
   position: relative;
   text-align: center;
-  width: 10rem;
+  width: 13rem;
   border: 1px solid #ccc;
   padding: 3rem .2rem .2rem .2rem;
+  min-width: 8rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
 }
 
 .preview-item p {
@@ -1058,8 +1186,12 @@ h1 {
 
 #newPost {
   display: grid;
+  grid-template-rows: 2rem 2rem 2rem 2rem 4rem auto 3rem;
   justify-items: center;
-  gap: 2rem;
+  gap: 2vh;
+  overflow-y: scroll;
+  height: 100vh;
+  align-content: space-evenly;
 }
 
 #newPost input, #newPost label {
@@ -1084,3 +1216,21 @@ h1 {
   pointer-events: none;
   /* Klicks durchlassen */
 }
+
+/* .button {
+  width: calc(80% + 1.2rem);
+  max-width: 31.2rem;
+  background: var(--button-bg);
+  border-radius: 800px;
+  font-weight: 500;
+  font-size: .8rem;
+  color: var(--button-color);
+  margin: 1.7rem 0;
+  padding: .5rem;
+  cursor: pointer;
+  transform-origin: 100% 100%;
+  border: none;
+}
+.button:hover {
+  background: var(--button-hover);
+} */

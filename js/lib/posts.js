@@ -1,4 +1,4 @@
-async function getPosts(offset, limit, filter) {
+async function getPosts(offset, limit, filter, title = "", tag = null) {
   const accessToken = getCookie("authToken");
 
   // Create headers
@@ -9,42 +9,56 @@ async function getPosts(offset, limit, filter) {
 
   var graphql = JSON.stringify({
     query: `query Getallposts {
-    getallposts(sortBy: "newest", limit: ${limit}, offset: ${offset}, filterBy: "${filter}") {
-        id
-        contenttype
-        title
-        media
-        mediadescription
-        createdat
-        amountlikes
-        amountviews
-        amountcomments
-        amountdislikes
-        isliked
-        isviewed
-        isreported
-        isdisliked
-        issaved
-        user {
+    getallposts(
+      sortBy: "newest", 
+      postLimit: ${limit}, 
+      postOffset: ${offset}, 
+      filterBy: "${filter}",        
+      title: "${title}",
+      tag: ${tag}
+    ) {
+        status
+        ResponseCode
+        affectedRows {
             id
-            username
-            img
-            isfollowed
-        }
-        comments {
-            commentid
-            userid
-            postid
-            parentid
-            content
-            amountlikes
-            isliked
+            contenttype
+            title
+            media
+            mediadescription
             createdat
+            amountlikes
+            amountviews
+            amountcomments
+            amountdislikes
+            isliked
+            isviewed
+            isreported
+            isdisliked
+            issaved
+            tags
             user {
                 id
                 username
                 img
                 isfollowed
+                isfollowing
+            }
+            comments {
+                commentid
+                userid
+                postid
+                parentid
+                content
+                amountlikes
+                isliked
+                createdat
+                user {
+                    id
+                    username
+                    img
+                    isfollowed
+                    isfollowing
+                }
             }
         }
     }
@@ -82,11 +96,12 @@ function likePost(postid) {
 
   var graphql = JSON.stringify({
     query: `mutation LikePost {
-        likePost(input: { postid: "${postid}" }) {
+        likePost(postid: "${postid}") {
           status
           ResponseCode
         }
       }`,
+
     variables: {},
   });
 
@@ -97,7 +112,7 @@ function likePost(postid) {
     redirect: "follow",
   };
 
-return fetch("https://getpeer.eu/graphql", requestOptions)
+  return fetch("https://getpeer.eu/graphql", requestOptions)
     .then((response) => response.json())
     .then((result) => {
       console.log(result);

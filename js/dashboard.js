@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const closeComments = document.getElementById("closeComments");
   closeComments.addEventListener("click", () => {
-    document.getElementById("overlay").classList.toggle("postViewShow");
+    togglePopup("cardClicked");
   });
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -19,40 +19,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const scrollContainer = document.getElementById("comments");
-  scrollContainer.addEventListener(
-    "wheel",
-    (event) => {
-      // Prüfen, ob das Scrollen am oberen oder unteren Rand des inneren Containers angekommen ist
-      const atTop = scrollContainer.scrollTop === 0;
-      const atBottom =
-        scrollContainer.scrollTop + scrollContainer.clientHeight + 1 >=
-        scrollContainer.scrollHeight;
+  // const scrollContainer = document.getElementById("comments");
+  // scrollContainer.addEventListener(
+  //   "wheel",
+  //   (event) => {
+  //     // Prüfen, ob das Scrollen am oberen oder unteren Rand des inneren Containers angekommen ist
+  //     const atTop = scrollContainer.scrollTop === 0;
+  //     const atBottom =
+  //       scrollContainer.scrollTop + scrollContainer.clientHeight + 1 >=
+  //       scrollContainer.scrollHeight;
 
-      // Wenn das innere Element am oberen Rand ist und nach oben gescrollt wird, oder am unteren Rand und nach unten gescrollt wird
-      if ((atTop && event.deltaY < 0) || (atBottom && event.deltaY > 0)) {
-        // Verhindern, dass das Event weitergegeben wird
-        event.preventDefault();
-      }
-      event.stopPropagation();
-    },
-    { capture: false, passive: false }
-  );
-
-  addScrollBlocker(document.getElementById("addPost"));
+  //     // Wenn das innere Element am oberen Rand ist und nach oben gescrollt wird, oder am unteren Rand und nach unten gescrollt wird
+  //     if ((atTop && event.deltaY < 0) || (atBottom && event.deltaY > 0)) {
+  //       // Verhindern, dass das Event weitergegeben wird
+  //       event.preventDefault();
+  //     }
+  //     event.stopPropagation();
+  //   },
+  //   { capture: false, passive: false }
+  // );
+  addScrollBlocker(document.getElementById("preview-container"));
+  addScrollBlocker(document.getElementById("comment-img-container"));
+  addScrollBlocker(document.getElementById("comments"));
   addScrollBlocker(document.getElementById("overlay"));
 
-  const imgContainer = document.getElementById('comment-img-container');
+  const imgContainer = document.getElementById("comment-img-container");
 
-  imgContainer.addEventListener('wheel', (event) => {
-      event.preventDefault(); // Verhindert Standard-Scroll-Verhalten
-      event.stopPropagation();
+  // imgContainer.addEventListener(
+  //   "wheel",
+  //   (event) => {
+  //     event.preventDefault();
+  //     event.stopPropagation();
 
-      imgContainer.scrollBy({
-          left: event.deltaY, // Scroll horizontal entsprechend des Mausrads
-          behavior: 'smooth' // Sanftes Scrollen
-      });
-  },{ capture: true, passive: false });  ;
+  //     imgContainer.scrollBy({
+  //       left: event.deltaY, // Scroll horizontal entsprechend des Mausrads
+  //       behavior: "smooth", // Sanftes Scrollen
+  //     });
+  //   },
+  //   { capture: true, passive: false }
+  // );
 
   const footer = document.getElementById("footer");
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
@@ -74,12 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("btAddPost")
     .addEventListener("click", function startAddPost() {
-      addPost();
+      togglePopup("addPost");
     });
   const closeAddPost = document.getElementById("closeAddPost");
   closeAddPost.addEventListener("click", () => {
-    document.getElementById("addPost").classList.remove("postViewShow");
-    document.getElementById("addPost").classList.add("none");
+    togglePopup("addPost");
   });
   document
     .getElementById("createPost")
@@ -100,8 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
           contenttype: "image",
         })
       ) {
-        document.getElementById("addPost").classList.remove("postViewShow");
-        document.getElementById("addPost").classList.add("none");
+        togglePopup("addPost");
+
         location.reload();
       }
     });
@@ -191,16 +195,106 @@ document.addEventListener("DOMContentLoaded", () => {
 // window.addEventListener("load", () => {
 
 // });
+
 async function addScrollBlocker(element) {
+  let isAnimating = false;
+  let lastTouchX = 0;
+  let lastTouchY = 0;
   element.addEventListener(
     "wheel",
     (event) => {
-      event.stopPropagation();
-      event.preventDefault();
+      handleScroll(event, "mouse", element);
     },
-    { capture: false, passive: false }
+    { passive: false }
   );
+  document.addEventListener("touchend", () => {
+    lastTouchX = null;
+    lastTouchY = null;
+  });
+  element.addEventListener(
+    "touchmove",
+    (event) => {
+      handleScroll(event, "touch", element);
+    },
+    { passive: false }
+  );
+
+  function handleScroll(event, inputType, el) {
+    //   const scrollableContainer = event.target.closest(".blockscroll");
+    //   if (!scrollableContainer) return; // Nur in bestimmten Containern scrollen
+
+    event.preventDefault(); // Standard-Scrollverhalten blockieren
+
+    // Bewegung erfassen
+    let deltaX = 0,
+      deltaY = 0,
+      tempo = 1;
+    if (inputType === "mouse") {
+      deltaX = event.deltaX * tempo;
+      deltaY = event.deltaY * tempo;
+      el.scrollLeft += deltaX - deltaY;
+      el.scrollTop += deltaY;
+    } else if (inputType === "touch") {
+      const touch = event.touches[0];
+      deltaX = lastTouchX ? touch.clientX - lastTouchX : 0;
+      deltaY = lastTouchY ? touch.clientY - lastTouchY : 0;
+
+      // Speichere die aktuelle Touch-Position
+      lastTouchX = touch.clientX;
+      lastTouchY = touch.clientY;
+      el.scrollLeft -= deltaX;
+      el.scrollTop -= deltaY;
+    }
+    // el.scrollBy({
+    //   left: deltaX,
+    //   top: deltaY,
+    //   behavior: 'smooth'
+    // });
+    // if (isScrollSnapEnabled(el)) {
+    //   ensureSnap(el);
+    // }
+  }
 }
+
+function isScrollSnapEnabled(container) {
+  // Prüfe, ob scroll-snap-type aktiviert ist
+  const style = window.getComputedStyle(container);
+  return style.scrollSnapType && style.scrollSnapType !== "none";
+}
+function ensureSnap(container) {
+  setTimeout(() => {
+    // Snap-Positionen für horizontal und vertikal berechnen
+    const snapPositionsX = Array.from(container.children).map(
+      (child) => child.offsetLeft
+    );
+    const snapPositionsY = Array.from(container.children).map(
+      (child) => child.offsetTop
+    );
+
+    const currentScrollX = container.scrollLeft;
+    const currentScrollY = container.scrollTop;
+
+    // Nächste Snap-Position für beide Richtungen finden
+    const closestSnapX = snapPositionsX.reduce((prev, curr) =>
+      Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX)
+        ? curr
+        : prev
+    );
+    const closestSnapY = snapPositionsY.reduce((prev, curr) =>
+      Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY)
+        ? curr
+        : prev
+    );
+
+    // Scrolle sanft zur nächsten Snap-Position
+    container.scrollTo({
+      left: closestSnapX,
+      top: closestSnapY,
+      behavior: "smooth",
+    });
+  }, 100); // Warte, bis die Bewegung abgeschlossen ist
+}
+
 function updateOnlineStatus() {
   const statusBanner = document.getElementById("h1");
   if (!navigator.onLine) {
@@ -232,7 +326,7 @@ async function getUser() {
     document.getElementById("following").innerText =
       profil.data.profile.affectedRows.amountfollowed;
     document.getElementById("profilbild").src = tempMedia(
-      profil.data.profile.affectedRows.img
+      profil.data.profile.affectedRows.img.replace("media/", "")
     );
   }
   return profil;
@@ -280,13 +374,13 @@ async function postsLaden() {
   // Ergebnis ausgeben
   console.log(result);
 
-  const posts = await getPosts(postsLaden.offset, 12, result);
+  const posts = await getPosts(postsLaden.offset, 48, result);
 
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
 
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
-  posts.data.getallposts.forEach((objekt) => {
+  posts.data.getallposts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
     const card = document.createElement("section");
     card.classList.add("card");
@@ -448,14 +542,19 @@ async function postsLaden() {
   // console.log("mediadescription:", objekt.mediadescription);
   // console.log("title:", objekt.title);
 }
+function togglePopup(popup) {
+  const overlay = document.getElementById("overlay");
+  overlay.classList.toggle("none");
+  const cc = document.getElementById(popup);
+  cc.classList.toggle("none");
+}
 function postClicked(objekt) {
-  const el = document.getElementById("overlay");
-  el.classList.toggle("postViewShow");
+  togglePopup("cardClicked");
   const imageContainer = document.getElementById("comment-img-container");
-
   const parts = objekt.media.split(",");
   let trimmedPart;
   let img;
+
   imageContainer.classList.add("comment-img");
   imageContainer.innerHTML = "";
   if (parts.length > 1) imageContainer.classList.add("multi");
@@ -464,6 +563,9 @@ function postClicked(objekt) {
     img = document.createElement("img");
     img.src = tempMedia(trimmedPart);
     img.alt = "";
+    // img.addEventListener("click", function () {
+    //   showImg(img);
+    // });
     imageContainer.appendChild(img);
   }
 
@@ -473,6 +575,10 @@ function postClicked(objekt) {
   text.innerText = objekt.mediadescription;
   // console.log(objekt.id );
   // console.log(objekt.media );
+  let mostliked = [];
+  let maxliked = 0;
+  let maxlikedname = "";
+  let counter = 0;
   const comments = document.getElementById("comments");
   comments.innerHTML = "";
   objekt.comments
@@ -482,23 +588,39 @@ function postClicked(objekt) {
       const comment = document.createElement("div");
       comment.classList.add("comment");
 
-      // User-Info-Container <div class="commentUser">
-      const commentUser = document.createElement("div");
-      commentUser.classList.add("commentUser");
-
       // Benutzerbild <img src="userImage" alt="user image">
       const img = document.createElement("img");
 
-      img.src = c.user.img ? tempMedia(c.user.img) : "svg/friends.svg";
+      img.src = c.user.img
+        ? tempMedia(c.user.img.replace("media/", ""))
+        : "svg/noname.svg";
       img.alt = "user image";
 
       // Benutzername <span>userName</span>
       const userNameSpan = document.createElement("span");
+      userNameSpan.classList.add("commentUser");
       userNameSpan.textContent = c.user.username;
 
       // Kommentar-Text <p>commentText</p>
       const commentParagraph = document.createElement("p");
       commentParagraph.textContent = c.content;
+
+      const existingEntry = mostliked.find(
+        (entry) => entry.key === c.commentid
+      );
+
+      if (existingEntry) {
+        // Wenn der Eintrag existiert, erhöhe den liked-Wert
+        existingEntry.liked += c.amountlikes;
+      } else {
+        // Wenn der Eintrag nicht existiert, füge einen neuen hinzu
+        mostliked.push({
+          key: c.commentid,
+          liked: c.amountlikes,
+          img: c.user.img,
+          name: c.user.username,
+        });
+      }
 
       const svgNS = "http://www.w3.org/2000/svg";
       const likeContainer = document.createElement("div");
@@ -548,19 +670,172 @@ function postClicked(objekt) {
       likeContainer.appendChild(spanLike);
 
       const commentDate = document.createElement("span");
-      commentDate.textContent = c.createdat.substring(0, 10);
+      commentDate.textContent = "  •  " + timeAgo(c.createdat);
       commentDate.classList.add("commentDate");
       likeContainer.appendChild(commentDate);
 
+      const commentHeader = document.createElement("div");
+
       // Zusammenfügen der Elemente
-      commentUser.appendChild(img);
-      commentUser.appendChild(userNameSpan);
-      comment.appendChild(commentUser);
+      comment.appendChild(img);
+      commentHeader.appendChild(userNameSpan);
+      commentHeader.appendChild(commentDate);
+      commentHeader.classList.add("commentNameTime");
+
+      comment.appendChild(commentHeader);
+
+      // comment.appendChild(commentUser);
       comment.appendChild(commentParagraph);
       comment.appendChild(likeContainer);
       comments.appendChild(comment);
     });
+  mostliked.sort((a, b) => b.liked - a.liked);
+  console.log(mostliked);
+  const mostlikedcontainer = document.getElementById("mostliked");
+  mostlikedcontainer.innerHTML = "";
+  for (let i = 0; i < 3 && i < mostliked.length; i++) {
+    const img = document.createElement("img");
+    img.src =mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
+    mostlikedcontainer.appendChild(img);
+  }
+  const topcommenter = document.createElement("span");
+  topcommenter.textContent = mostliked.length
+    ? mostliked[0].name + " and " + objekt.amountlikes + " others liked"
+    : "no one like";
+  mostlikedcontainer.appendChild(topcommenter);
 }
+function timeAgo(datetime) {
+  const now = Date.now(); // Aktuelle Zeit in Millisekunden
+  const timestamp = new Date(datetime.replace(" ", "T")).getTime(); // ISO-konforme Umwandlung
+  const elapsed = now - timestamp - 3600000; // Verstrichene Zeit in Millisekunden
+
+  const seconds = Math.floor(elapsed / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
+  const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
+
+  if (seconds < 60) return `${seconds} seconds ago`;
+  if (minutes < 60) return `${minutes} minutes ago`;
+  if (hours < 24) return `${hours} hours ago`;
+  if (days < 7) return `${days} days ago`;
+  if (weeks < 4) return `${weeks} weeks ago`;
+  if (months < 12) return `${months} months ago`;
+  return `${years} years ago`;
+}
+
+// // Beispielaufruf
+// const exampleTimestamp = Date.now() - 90000000; // Vor 90 Millionen Millisekunden (25 Stunden)
+// console.log(timeAgo(exampleTimestamp));
+
+// let isDragging = false;
+// let startX = 0;
+// let startY = 0;
+// let offsetX = 0;
+// let offsetY = 0;
+// let scale = 1;
+// let dragimg;
+
+// function setCSSVariables() {
+//   dragimg.style.setProperty("--translate-x", `${offsetX}px`);
+//   dragimg.style.setProperty("--translate-y", `${offsetY}px`);
+//   dragimg.style.setProperty("--scale", scale);
+// }
+// function getAbsolutePosition(element) {
+//   const rect = element.getBoundingClientRect();
+//   const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+//   const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+//   return {
+//     top: rect.top + scrollTop,
+//     left: rect.left + scrollLeft,
+//   };
+// }
+// function getAbsolutePosition2(element) {
+//   let x = 0,
+//     y = 0;
+
+//   while (element) {
+//     // Addiere die Position relativ zum Eltern-Element
+//     x += element.offsetLeft - element.scrollLeft + element.clientLeft;
+//     y += element.offsetTop - element.scrollTop + element.clientTop;
+
+//     // Wechsle zum übergeordneten Element
+//     element = element.offsetParent;
+//   }
+
+//   return { x, y };
+// }
+
+// function extractFromGrid() {
+//   const rect = dragimg.getBoundingClientRect();
+//   startX = rect.left;
+//   startY = rect.top;
+//   offsetX = 0;
+//   offsetY = 0;
+//   scale = 1;
+//   // dragimg.style.setProperty("--left", `${rect.left}px`);
+//   // dragimg.style.setProperty("--top", `${rect.top}px`);
+//   dragimg.style.setProperty("--translate-x", `${offsetX}px`);
+//   dragimg.style.setProperty("--translate-y", `${offsetY}px`);
+//   dragimg.style.setProperty("--scale", scale);
+//   // dragimg.classList.add("absolute");
+// }
+// function showImg(img) {
+//   dragimg = img;
+//   extractFromGrid();
+
+//   dragimg.addEventListener("mousedown", (e) => {
+//     isDragging = true;
+//     startX = e.clientX;
+//     startY = e.clientY;
+//     dragimg.style.cursor = "grabbing";
+//   });
+
+//   document.addEventListener("mousemove", (e) => {
+//     if (!isDragging) return;
+
+//     offsetX = e.clientX - startX;
+//     offsetY = e.clientY - startY;
+//     dragimg.style.setProperty("--translate-x", `${offsetX}px`);
+//     dragimg.style.setProperty("--translate-y", `${offsetY}px`);
+//   });
+
+//   document.addEventListener("mouseup", () => {
+//     isDragging = false;
+//     dragimg.style.cursor = "grab";
+//   });
+//   dragimg.addEventListener("wheel", (e) => {
+//     e.preventDefault();
+
+//     const zoomIntensity = 0.01;
+//     const rect = dragimg.getBoundingClientRect();
+
+//     // Aktuelle Mausposition relativ zum Bild
+//     const mouseX = e.clientX - rect.left;
+//     const mouseY = e.clientY - rect.top;
+
+//     // Berechnung von transform-origin basierend auf Mausposition
+//     const originX = (mouseX / rect.width) * 100;
+//     const originY = (mouseY / rect.height) * 100;
+
+//     dragimg.style.setProperty("--transform-origin-x", `${originX}%`);
+//     dragimg.style.setProperty("--transform-origin-y", `${originY}%`);
+
+//     // Zoom anpassen
+//     scale += e.deltaY > 0 ? -zoomIntensity : zoomIntensity;
+//     scale = Math.min(Math.max(scale, 0.5), 3); // Begrenzung des Zooms
+//     dragimg.style.setProperty("--scale", scale);
+//   });
+// }
+
+// // Beispiel:
+// const element = document.querySelector("#comment-img-container");
+// const position = getAbsolutePosition(element);
+// console.log("Absolute Position:", position);
+
 // postsLaden();
 // Das Footer-Element auswählen
 
@@ -685,15 +960,6 @@ async function convertImageToBase64(file, progressBar) {
 
     reader.readAsDataURL(file);
   });
-}
-
-function updateProgress(progressBar, value) {
-  progressBar.value = value;
-}
-function addPost(objekt) {
-  const el = document.getElementById("addPost");
-  el.classList.toggle("none");
-  el.classList.toggle("postViewShow");
 }
 
 function saveFilterSettings() {
