@@ -63,7 +63,6 @@
   /* Farbe des Scrollbalkens */
   border-radius: 6px;
   /* Abgerundete Ecken */
-
 }
 
 #comment-img-container::-webkit-scrollbar-track {
@@ -73,7 +72,8 @@
   /* Innenschatten */
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background-color: var(--background-color);
@@ -101,8 +101,8 @@ h1 {
   font-family: Arial, sans-serif;
 }
 
-
-.sidebar, .profil {
+.sidebar,
+.profil {
   position: sticky;
   z-index: 2;
   top: 0;
@@ -153,7 +153,7 @@ h1 {
   position: relative;
   display: flex;
   align-items: center;
-  gap: .7rem;
+  gap: 0.7rem;
 }
 
 .header div img {
@@ -169,7 +169,8 @@ h1 {
   justify-content: center;
 }
 
-.footer img, .loading {
+.footer img,
+.loading {
   animation: loading 4s ease 0s infinite;
   height: 3rem;
 }
@@ -192,11 +193,11 @@ h1 {
 
 #searchText {
   display: inline-flex;
-  padding: .6rem 1.7rem .6rem .6rem;
+  padding: 0.6rem 1.7rem 0.6rem 0.6rem;
   width: 12rem;
   max-width: 30rem;
   border-radius: 800px;
-  margin: .2rem 0;
+  margin: 0.2rem 0;
   position: relative;
   background-color: var(--input-background);
   color: var(--text-color);
@@ -204,7 +205,7 @@ h1 {
 }
 
 .lupe {
-  right: .4rem;
+  right: 0.4rem;
   z-index: 3;
   height: 1.5rem;
   position: absolute;
@@ -222,8 +223,6 @@ h1 {
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
-
-
 
 /* Standard-Zeilen: Links 60%, Rechts 40% */
 /* .main .card:nth-child(2n+1) {
@@ -257,7 +256,6 @@ h1 {
   text-align: center;
 } */
 
-
 @media (max-width: 45rem) {
   /* Die Dashboard-Struktur in einen horizontalen Scrollbereich umwandeln */
 
@@ -269,7 +267,9 @@ h1 {
   }
 
   /* Bereiche mit Scroll-Snap und Vollbild-Breite */
-  .sidebar, .main, .profil {
+  .sidebar,
+  .main,
+  .profil {
     scroll-snap-align: start;
     min-width: calc(100vw - 0rem);
     max-width: calc(100vw - 0rem);
@@ -288,9 +288,8 @@ h1 {
   }
 
   .header {
-    font-size: .5rem;
+    font-size: 0.5rem;
   }
-
 }
 
 @media (max-width: 77rem) {
@@ -310,17 +309,21 @@ h1 {
     width: 100vw !important;
     height: 100vh !important;
     grid-template-columns: 1fr !important;
-    grid-template-areas: "img"
+    grid-template-areas:
+      "img"
       "comment" !important;
     grid-template-rows: auto auto;
     align-items: stretch;
+    display: block !important;
+    overflow: scroll;
+  }
+  .cImg{
+
   }
 
   .comments {
     width: 97% !important;
-    padding-top: 50vh;
     grid-area: none !important;
-    margin-top: 30vh;
     height: 69vh !important;
   }
 
@@ -328,7 +331,7 @@ h1 {
     position: relative;
     /* background: hsla(0, 0%, 100%, 0.6); */
     color: #000;
-    padding: .3rem 1rem;
+    padding: 0.3rem 1rem;
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
@@ -336,7 +339,8 @@ h1 {
   }
 }
 
-@media (orientation:portrait) {}
+@media (orientation: portrait) {
+}
 
 .filterContainer {
   max-width: 15rem;
@@ -356,7 +360,7 @@ h1 {
 }
 
 .filterButton {
-  margin-top: .8rem;
+  margin-top: 0.8rem;
   display: flex;
   width: 100%;
   justify-content: space-evenly;
@@ -366,20 +370,20 @@ h1 {
 }
 
 .filterButton:hover {
-  animation: borderButton .5s forwards;
+  animation: borderButton 0.5s forwards;
 }
 
 @keyframes borderButton {
   0% {
-    box-shadow: 0 0 .2rem transparent;
+    box-shadow: 0 0 0.2rem transparent;
   }
 
   50% {
-    box-shadow: 0 0 .2rem var(--text-color);
+    box-shadow: 0 0 0.2rem var(--text-color);
   }
 
   100% {
-    box-shadow: 0 0 .2rem transparent;
+    box-shadow: 0 0 0.2rem transparent;
   }
 }
 
@@ -388,16 +392,14 @@ h1 {
 }
 
 .filterGroup {
-  transition: filter 0.3s ease;
-
 }
 
 .filterGroup label img {
   transition: filter 0.2s ease;
   max-height: 2rem;
   filter: brightness(9);
-  padding: .3rem;
-  border-radius: .3rem;
+  padding: 0.3rem;
+  border-radius: 0.3rem;
 }
 
 .filterGroup label:hover img {
@@ -406,38 +408,67 @@ h1 {
   cursor: pointer;
 }
 
-.filterGroup input[type="checkbox"]+label:hover img {
+.filterGroup input[type="checkbox"] + label:hover img {
   animation: borderButton 2s forwards;
 }
 
-.filter>p {
+.filter > p {
   width: 100%;
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
 
-.filterApply>button {}
+.filterApply > button {
+}
 
 .filterGroup {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  margin: 0 auto;
+  transition: filter 0.3s ease;
 }
 
 .filterGroup img {
   width: 2em;
-  height: auto
+  height: auto;
 }
 
-.filterGroup input[type="checkbox"] {
+.filterGroup input[type="checkbox"],
+.filterGroup input[type="radio"],
+#overlay input[type="radio"] {
   display: none;
 }
+#labelCreatePodcast img ,
+#labelCreateShorts img ,
+#labelCreatePolls img ,
+#labelCreateQuiz img ,
+#labelCreateEvent img {
+  cursor: not-allowed; /* Zeigt den nicht erlaubten Mauszeiger */
+  opacity: 0.6; /* Optionale Transparenz */
+}
 
-.filterGroup input[type="checkbox"]:checked+label img {
+.filterGroup input[type="checkbox"]:checked + label img,
+.filterGroup input[type="radio"]:checked + label img,
+#createImage:checked ~ menu .filterGroup > #labelCreateImage img ,
+#createNotes:checked ~ menu .filterGroup > #labelCreateNotes img ,
+#createAudio:checked ~ menu .filterGroup > #labelCreateAudio img ,
+#createVideo:checked ~ menu .filterGroup > #labelCreateVideo img ,
+#createPodcast:checked ~ menu .filterGroup > #labelCreatePodcast img ,
+#createShorts:checked ~ menu .filterGroup > #labelCreateShorts img ,
+#createPolls:checked ~ menu .filterGroup > #labelCreatePolls img ,
+#createQuiz:checked ~ menu .filterGroup > #labelCreateQuiz img ,
+#createEvent:checked ~ menu .filterGroup > #labelCreateEvent img {
   filter: brightness(1);
   background-color: transparent !important;
+}
+
+#createImage:checked ~ #newImagePost,
+#createVideo:checked ~ #newVideoPost,
+#createAudio:checked ~ #newAudioPost {
+  display: block !important;
 }
 
 .dark-select option {
@@ -476,7 +507,8 @@ h1 {
   color: var(--text-color);
 }
 
-#profil-container, #profil-login {
+#profil-container,
+#profil-login {
   scroll-snap-align: start;
   scroll-margin-top: 1rem;
   padding-top: 1rem;
@@ -576,9 +608,9 @@ h1 {
 
 .filterContainer .menu-item {
   border-radius: 2rem;
-  box-shadow: .1rem .1rem 1rem var(--black);
+  box-shadow: 0.1rem 0.1rem 1rem var(--black);
   margin-top: 0.7rem;
-  padding: .6rem 1.2rem;
+  padding: 0.6rem 1.2rem;
 }
 
 .menu-item:hover {
@@ -630,17 +662,17 @@ h1 {
 }
 
 .icon-add {
-  border: .2rem solid;
+  border: 0.2rem solid;
   border-radius: 50%;
   width: 2rem;
   height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
 }
 
-.icon-add:hover, .icon-group:hover {
+.icon-add:hover,
+.icon-group:hover {
   filter: brightness(2) drop-shadow(0 0 0.5rem var(--shadow-add));
   cursor: pointer;
 }
@@ -659,7 +691,7 @@ h1 {
   color: var(--black);
   font-weight: bold;
   padding: 0.2rem 1rem;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
 }
 
 .none {
@@ -672,7 +704,8 @@ h1 {
   transition: transform 0.1s ease-out;
   /* Glatte Animation */
   transform-origin: var(--transform-origin-x) var(--transform-origin-y);
-  transform: translate(var(--translate-x), var(--translate-y)) scale(var(--scale));
+  transform: translate(var(--translate-x), var(--translate-y))
+    scale(var(--scale));
   position: absolute !important;
   /* top: var(--top, 0) !important;
   left: var(--left, 0) !important; */
@@ -683,7 +716,8 @@ h1 {
   max-height: var(--height, 0) !important; */
 }
 
-#profil-login a, #newPost button {
+#profil-login a,
+.upload button {
   display: block;
   padding: 1rem;
   background: var(--button-bg);
@@ -694,7 +728,8 @@ h1 {
   border: 1px solid #eee;
 }
 
-#profil-login a:hover, #newPost button:hover {
+#profil-login a:hover,
+.upload button:hover {
   cursor: pointer;
   background: var(--button-hover);
 }
@@ -736,7 +771,8 @@ h1 {
 .shadow {
   height: 100%;
   width: 100%;
-  box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000;
+  box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5),
+    inset 0 0 2rem #000;
   position: absolute;
 }
 
@@ -768,7 +804,7 @@ h1 {
 .social div {
   display: flex;
   align-items: center;
-  gap: .4rem;
+  gap: 0.4rem;
 }
 
 .social svg {
@@ -787,7 +823,7 @@ h1 {
   /* left: 0; */
   /* z-index: 2; */
   width: 100%;
-  margin-bottom: .4rem;
+  margin-bottom: 0.4rem;
   /* height: 2rem; */
   display: inline-block;
   text-shadow: 0 0 2px var(--black);
@@ -795,7 +831,7 @@ h1 {
 
 .post-text {
   display: table-column;
-  font-size: .8rem;
+  font-size: 0.8rem;
   /* z-index: 2; */
   position: absolute;
   /* top: 50%; */
@@ -807,9 +843,9 @@ h1 {
   width: 98%;
   padding: 1rem;
   left: 0;
-  color: var(--white)
-    /* margin-bottom: 5rem; */
-    /* bottom: 3rem; */
+  color: var(--white);
+  /* margin-bottom: 5rem; */
+  /* bottom: 3rem; */
 }
 
 .fill-red use {
@@ -820,7 +856,7 @@ h1 {
 }
 
 .postOptionsButton {
-  padding: .3rem;
+  padding: 0.3rem;
   border-radius: 1rem;
   border: 1px solid transparent;
 }
@@ -831,13 +867,12 @@ h1 {
 }
 
 @keyframes pulse {
-
   0% {
     transform: scale(1);
   }
 
   25% {
-    transform: scale(.7);
+    transform: scale(0.7);
   }
 
   50% {
@@ -845,7 +880,7 @@ h1 {
   }
 
   75% {
-    transform: scale(.7);
+    transform: scale(0.7);
   }
 
   100% {
@@ -857,20 +892,21 @@ h1 {
   display: none;
 }
 
-#postView {}
-
+#postView {
+}
 
 .comment {
   position: relative;
   /* background: hsla(0, 0%, 100%, 0.5); */
   color: #ffffff;
-  padding: .3rem 1rem;
+  padding: 0.3rem 1rem;
   border-radius: 1rem;
   /* display: flex;
   flex-direction: column; */
   display: grid;
   grid-template-columns: 5rem auto 5rem;
-  grid-template-areas: "image name liked"
+  grid-template-areas:
+    "image name liked"
     "image comment liked";
 }
 
@@ -891,7 +927,7 @@ h1 {
   grid-area: image;
   height: 100%;
   width: auto;
-  margin: 0;
+  margin: 0 !important;
 }
 
 .likeComment {
@@ -899,7 +935,7 @@ h1 {
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .likeComment svg {
@@ -907,7 +943,8 @@ h1 {
   width: 1.7rem;
 }
 
-.commentDate {}
+.commentDate {
+}
 
 #overlay {
   position: fixed;
@@ -954,7 +991,6 @@ h1 {
   left: 0;
   top: 0; */
 
-
   /* background-color: #000000cc;
   backdrop-filter: blur(5px); */
 }
@@ -963,7 +999,7 @@ h1 {
   grid-area: img;
   position: relative;
   display: grid;
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: auto auto auto;
   grid-template-columns: 1fr;
   height: 95%;
   width: 95%;
@@ -975,7 +1011,7 @@ h1 {
   white-space: nowrap;
   /* scroll-behavior: smooth; */
   display: flex;
-  grid-row: 2;
+  grid-row: 1;
   /* box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000; */
   margin: auto;
   height: 50vh;
@@ -996,11 +1032,12 @@ h1 {
   height: 94%;
   max-height: 95%;
   width: 95%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #comments-header {
   margin-bottom: 3rem;
-
 }
 
 .commentsButtons {
@@ -1015,9 +1052,11 @@ h1 {
   display: flex;
   align-items: center;
   padding-left: 1.5rem;
+  margin-top: 2rem;
 }
 
-#mostliked img, .comment img {
+#mostliked img,
+.comment img {
   position: relative;
   border-radius: 50%;
   height: 4rem;
@@ -1047,21 +1086,32 @@ h1 {
   gap: 2rem;
 }
 
-
-.postViews svg,#comments-buttons img {
-  height: 2rem;
-  width: 2rem;
+.btn,
+.postViews svg,
+#comments-buttons img {
+  height: 1.5rem;
+  width: 1.5rem;
 }
 
-#comments-buttons,.postViews {
+#comments-buttons,
+.postViews {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-
+.flex {
+  display: flex;
+  gap: 1rem;
+}
+.centvert {
+  align-items: center;
+}
+.csum {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
 #comment-title {
-  grid-row: 1;
-  text-align: center;
+  grid-row: 2;
   font-size: 2rem;
   font-weight: bold;
   align-self: end;
@@ -1080,7 +1130,7 @@ h1 {
   width: 1rem;
   height: 1rem;
   display: flex;
-  padding: .5rem;
+  padding: 0.5rem;
   transform: rotateZ(45deg);
   border-radius: 50%;
   justify-content: center;
@@ -1097,7 +1147,7 @@ h1 {
   width: 1rem;
   height: 1rem;
   display: flex;
-  padding: .5rem;
+  padding: 0.5rem;
   transform: rotateZ(45deg);
   border-radius: 50%;
   justify-content: center;
@@ -1114,35 +1164,86 @@ h1 {
 }
 
 .comment p {
-  padding-bottom: .7rem;
+  padding-bottom: 0.7rem;
 }
 
-.addPost {
+#addPost {
   display: block;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0vh;
+  left: 0vw;
   width: 100vw;
   height: 100vh;
-  background-color: #4848487d;
+  background-color: #363636e6;
   backdrop-filter: blur(5px);
   z-index: 2;
+  display: grid;
+  grid-template-columns: 16rem auto 18rem;
+  border-radius: 2rem;
+  gap: 3vw;
+  padding: 2vh 3vw;
 }
-
-#drop-area {
-  border: 2px dashed #ccc;
-  padding: 20px;
+#addPost .filter .center {
+  flex-direction: column;
+  margin-bottom: 5rem;
+}
+#addPost .filter h2 {
+  margin-bottom: 2rem;
+}
+.upload {
+  grid-column: 2;
+}
+.select {
+  grid-column: 1;
+}
+.addTags {
+  grid-column: 3;
+  width: 100%;
+  background-color: #3f4349;
+  border-radius: 1rem;
+  height: 25rem;
+  margin-top: 11rem;
+  padding: 1.5rem;
+}
+#createPostImage, #createPostAudio {
+  position: absolute;
+  right: 4rem;
+  bottom: 4rem;
+  border-color: #61d31b;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  border: 1px solid #61d31b;
+  cursor: pointer;
+  color: #61d31b;
+}
+.drop-area {
+  border: 3px dashed #cccccc00;
+  padding: 1rem;
   text-align: center;
   width: 300px;
-  margin: auto;
+  margin: 0 auto;
   cursor: pointer;
+  width: 93%;
+  height: 18rem;
+  background-color: #5c5e60;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 3rem;
 }
 
-#drop-area.hover {
-  border-color: #000;
+.drop-area.hover {
+  border-color: green;
 }
-
-#preview-container {
+.drop-area img {
+  width: 2rem;
+  height: auto;
+  margin: 1rem auto;
+}
+.preview-container {
   padding-top: 1rem;
   margin-top: 20px;
   display: flex;
@@ -1161,7 +1262,7 @@ h1 {
   text-align: center;
   width: 13rem;
   border: 1px solid #ccc;
-  padding: 3rem .2rem .2rem .2rem;
+  padding: 3rem 0.2rem 0.2rem 0.2rem;
   min-width: 8rem;
   display: flex;
   justify-content: center;
@@ -1184,34 +1285,88 @@ h1 {
   height: 10px;
 }
 
-#newPost {
-  display: grid;
+.upload {
+  /* display: grid;
   grid-template-rows: 2rem 2rem 2rem 2rem 4rem auto 3rem;
   justify-items: center;
-  gap: 2vh;
+  gap: 2vh; */
   overflow-y: scroll;
-  height: 100vh;
-  align-content: space-evenly;
+  height: 100%;
+  /* align-content: space-evenly; */
+  display: none;
 }
-
-#newPost input, #newPost label {
+.upload > p,
+.addTags > p {
+  text-align: right;
+  font-size: small;
+  margin: 1rem 3% 1rem 0;
+}
+.upload h2 {
+  margin: 2rem 3% 1rem 3%;
+}
+.addTags input,
+.upload input,
+.upload label,
+.upload textarea {
   font-size: 1.5rem;
-  width: 100vw;
+  width: 80%;
+  border-radius: 1rem;
+  background-color: #b0b0b0;
+  padding-left: 1rem;
+  height: 3rem;
+  margin: 1rem auto;
+  width: 94%;
+  left: 3%;
+  position: relative;
+  color: #000;
+  font-size: 0.9rem;
 }
-
+#tagsContainer {
+  background-color: #252525;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+#tagsSelected {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+#tagsContainer > p {
+  margin-top: 5rem;
+}
+#tagsContainer > div div {
+  padding: 0.3rem;
+  border: 1px solid #fff;
+  display: inline-block;
+  border-radius: 0.4rem;
+}
+.upload textarea {
+  padding: 1rem;
+  resize: vertical;
+  height: 6rem;
+  max-height: 20rem;
+  min-height: 3rem;
+}
+.upload input::placeholder,
+.upload textarea::placeholder {
+  font-size: small;
+  color: #00070f;
+}
 .image-wrapper {
   display: block;
 }
 
 .multi::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 1rem;
   right: 1rem;
   width: 2rem;
   height: 2rem;
   background: no-repeat center/contain;
-  background-image: url('../svg/multi.svg');
+  background-image: url("../svg/multi.svg");
   /* SVG referenzieren */
   pointer-events: none;
   /* Klicks durchlassen */
@@ -1234,3 +1389,18 @@ h1 {
 .button:hover {
   background: var(--button-hover);
 } */
+/* Stil für das Audio-Element */
+.custom-audio {
+  width: 90%; /* Breite des Players */
+  height: 4rem; /* Höhe des Players */
+  background-color: #f0f0f0; /* Hintergrundfarbe */
+  border: 2px solid #007bff; /* Blauer Rahmen */
+  border-radius: 8px; /* Abgerundete Ecken */
+  padding: 5px; /* Abstand im Player */
+}
+
+/* Optional: Hover-Effekt */
+.custom-audio:hover {
+  background-color: #e0e0e0;
+  border-color: #0056b3;
+}

@@ -1,5 +1,5 @@
 <?php 
-header("Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' https://media.getpeer.eu/ data: blob:; worker-src 'self' about:; connect-src 'self' https://media.getpeer.eu/ https://getpeer.eu/graphql; child-src 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'");
+header("Content-Security-Policy: default-src https://media.getpeer.eu:8443 'self'; style-src 'self'; img-src 'self' https://media.getpeer.eu:8443 data:; media-src 'self' https://media.getpeer.eu:8443 data: blob:; worker-src 'self' about:; connect-src 'self' https://media.getpeer.eu:8443 https://getpeer.eu/graphql; child-src https://media.getpeer.eu:8443 'self'; script-src 'self' about:; script-src-elem 'self' about:; base-uri 'self'; frame-ancestors 'self'; form-action 'self'");
 ini_set("session.cookie_httponly", 1);
 
 // https://getpeer.eu:8443/

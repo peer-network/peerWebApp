@@ -5,10 +5,26 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("online", updateOnlineStatus);
   window.addEventListener("offline", updateOnlineStatus);
   updateOnlineStatus();
-
+  // const createFilsters = document.getElementById("overlay");
+  // createFilsters.addEventListener("change", (event) => {
+  //   // Prüfen, ob das Event von einem Radio-Button stammt
+  //   if (event.target.type === "radio") {
+  //     const fileInput = document.getElementById("file-input");
+  //     fileInput.accept = event.target.value;
+  //   }
+  // });
   const closeComments = document.getElementById("closeComments");
+
   closeComments.addEventListener("click", () => {
     togglePopup("cardClicked");
+  });
+  const addComment = document.getElementById("addComment");
+  addComment.addEventListener("click", (event) => {
+    const clickedElement = event.currentTarget;
+
+    // Ein Attribut auslesen, z. B. 'data-id'
+    const attributeValue = clickedElement.getAttribute("postID");
+    createComment(attributeValue, "test");
   });
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -38,9 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
   //   },
   //   { capture: false, passive: false }
   // );
-  addScrollBlocker(document.getElementById("preview-container"));
+  addScrollBlocker(document.getElementById("preview-image"));
+  addScrollBlocker(document.getElementById("preview-audio"));
   addScrollBlocker(document.getElementById("comment-img-container"));
-  addScrollBlocker(document.getElementById("comments"));
+  addScrollBlocker(document.getElementById("comments-container"));
+  addScrollBlocker(document.getElementById("cardClicked"));
   addScrollBlocker(document.getElementById("overlay"));
 
   const imgContainer = document.getElementById("comment-img-container");
@@ -86,11 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
     togglePopup("addPost");
   });
   document
-    .getElementById("createPost")
+    .getElementById("createPostImage")
     .addEventListener("click", async function createPost(event) {
       event.preventDefault(); // Prevent form reload
-      const title = document.getElementById("bildueberschrift").value;
-      const beschreibung = document.getElementById("bildbeschreibung").value;
+      const title = document.getElementById("titleImage").value;
+      const beschreibung = document.getElementById("descriptionImage").value;
       const imageWrappers = document.querySelectorAll(".image-wrapper");
 
       const combinedHTML = Array.from(imageWrappers)
@@ -102,6 +120,30 @@ document.addEventListener("DOMContentLoaded", () => {
           media: combinedHTML,
           mediadescription: beschreibung,
           contenttype: "image",
+        })
+      ) {
+        togglePopup("addPost");
+
+        location.reload();
+      }
+    });
+    document
+    .getElementById("createPostAudio")
+    .addEventListener("click", async function createPost(event) {
+      event.preventDefault(); // Prevent form reload
+      const title = document.getElementById("titleAudio").value;
+      const beschreibung = document.getElementById("descriptionImage").value;
+      const imageWrappers = document.querySelectorAll(".image-wrapper");
+
+      const combinedHTML = Array.from(imageWrappers)
+        .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+        .join(" "); // Concatenate the HTML content with a space in between
+      if (
+        await sendCreatePost({
+          title: title,
+          media: combinedHTML,
+          mediadescription: beschreibung,
+          contenttype: "audio",
         })
       ) {
         togglePopup("addPost");
@@ -161,36 +203,101 @@ document.addEventListener("DOMContentLoaded", () => {
     lastScrollPosition = currentScrollTop;
   });
 
-  const dropArea = document.getElementById("drop-area");
-  const fileInput = document.getElementById("file-input");
+  // Liste der Dropzonen und Input-Elemente
+  const zones = [
+    {
+      dropArea: document.getElementById("drop-area-image"),
+      fileInput: document.getElementById("file-input-image"),
+    },
+    {
+      dropArea: document.getElementById("drop-area-audio"),
+      fileInput: document.getElementById("file-input-audio"),
+    },
+    {
+      dropArea: document.getElementById("drop-area-video"),
+      fileInput: document.getElementById("file-input-video"),
+    }
+  ];
 
-  dropArea.addEventListener("click", () => fileInput.click());
+  // Gemeinsame Funktionen für die Event-Listener
+  function handleClick(fileInput) {
+    fileInput.click();
+  }
 
-  dropArea.addEventListener("dragover", (e) => {
+  function handleDragOver(e, dropArea) {
     e.preventDefault();
     dropArea.classList.add("hover");
-  });
+  }
 
-  dropArea.addEventListener("dragleave", () => {
+  function handleDragLeave(dropArea) {
     dropArea.classList.remove("hover");
-  });
+  }
 
-  dropArea.addEventListener("drop", async (e) => {
+  async function handleDrop(e, dropArea, processFiles) {
     e.preventDefault();
     dropArea.classList.remove("hover");
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      processFiles(files);
+      await processFiles(files, e.currentTarget.id);
     }
-  });
+  }
 
-  fileInput.addEventListener("change", async (e) => {
+  async function handleFileChange(e, processFiles) {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
-      processFiles(files);
+      await processFiles(files, e.currentTarget.id);
     }
+  }
+
+  // Iteration über die Zonen
+  zones.forEach(({ dropArea, fileInput }) => {
+    // Click-Event für das Öffnen des Dateidialogs
+    dropArea.addEventListener("click", () => handleClick(fileInput));
+
+    // Drag-and-Drop-Events
+    dropArea.addEventListener("dragover", (e) => handleDragOver(e, dropArea));
+    dropArea.addEventListener("dragleave", () => handleDragLeave(dropArea));
+    dropArea.addEventListener("drop", (e) =>
+      handleDrop(e, dropArea, processFiles)
+    );
+
+    // File-Input-Change-Event
+    fileInput.addEventListener("change", (e) =>
+      handleFileChange(e, processFiles)
+    );
   });
+
+  //   const dropArea = document.getElementById("drop-area");
+  //   const fileInput = document.getElementById("file-input");
+
+  //   dropArea.addEventListener("click", () => fileInput.click());
+
+  //   dropArea.addEventListener("dragover", (e) => {
+  //     e.preventDefault();
+  //     dropArea.classList.add("hover");
+  //   });
+
+  //   dropArea.addEventListener("dragleave", () => {
+  //     dropArea.classList.remove("hover");
+  //   });
+
+  //   dropArea.addEventListener("drop", async (e) => {
+  //     e.preventDefault();
+  //     dropArea.classList.remove("hover");
+
+  //     const files = Array.from(e.dataTransfer.files);
+  //     if (files.length > 0) {
+  //       processFiles(files);
+  //     }
+  //   });
+
+  //   fileInput.addEventListener("change", async (e) => {
+  //     const files = Array.from(e.target.files);
+  //     if (files.length > 0) {
+  //       processFiles(files);
+  //     }
+  //   });
 });
 // window.addEventListener("load", () => {
 
@@ -397,24 +504,33 @@ async function postsLaden() {
     let img;
     postDiv = document.createElement("div");
     postDiv.classList.add("post");
-    if (parts.length > 1) postDiv.classList.add("multi");
-    for (const part of parts) {
-      trimmedPart = part.trim();
-      img = document.createElement("img");
+    if (objekt.contenttype === "image") {
+      if (parts.length > 1) postDiv.classList.add("multi");
+      for (const part of parts) {
+        trimmedPart = part.trim();
+        img = document.createElement("img");
 
-      img.onload = () => {
-        img.setAttribute("height", img.naturalHeight);
-        img.setAttribute("width", img.naturalWidth);
-      };
-      img.onerror = (error) => {
-        // Fehler behandeln, wenn das Bild nicht geladen werden kann
-        // reject(error);
-      };
+        img.onload = () => {
+          img.setAttribute("height", img.naturalHeight);
+          img.setAttribute("width", img.naturalWidth);
+        };
+        img.onerror = (error) => {
+          // Fehler behandeln, wenn das Bild nicht geladen werden kann
+          // reject(error);
+        };
 
-      img.src = tempMedia(trimmedPart);
-      img.alt = "";
+        img.src = tempMedia(trimmedPart);
+        img.alt = "";
 
-      postDiv.appendChild(img);
+        postDiv.appendChild(img);
+      }
+    } else if (objekt.contenttype === "audio") {
+      audio = document.createElement("audio");
+      audio.id = objekt.media;
+      audio.src = tempMedia(objekt.media);
+      audio.controls = true;
+      audio.className = "custom-audio";
+      postDiv.appendChild(audio);
     }
 
     const shadowDiv = document.createElement("div");
@@ -551,35 +667,65 @@ function togglePopup(popup) {
 function postClicked(objekt) {
   togglePopup("cardClicked");
   const imageContainer = document.getElementById("comment-img-container");
-  const parts = objekt.media.split(",");
-  let trimmedPart;
-  let img;
-
-  imageContainer.classList.add("comment-img");
   imageContainer.innerHTML = "";
-  if (parts.length > 1) imageContainer.classList.add("multi");
-  for (const part of parts) {
-    trimmedPart = part.trim();
-    img = document.createElement("img");
-    img.src = tempMedia(trimmedPart);
-    img.alt = "";
-    // img.addEventListener("click", function () {
-    //   showImg(img);
-    // });
-    imageContainer.appendChild(img);
+
+  if (objekt.contenttype === "audio") {
+    const audio = document.createElement("audio");
+    audio.id = "audio2";
+    audio.src = tempMedia(objekt.media);
+    audio.controls = true;
+    audio.className = "custom-audio";
+
+    // 1. Erzeuge das <div>-Element
+    const audioContainer = document.createElement("div");
+    audioContainer.id = "audio-container"; // Setze die ID
+
+    // 2. Erzeuge das <canvas>-Element
+    const canvas = document.createElement("canvas");
+    canvas.id = "waveform-preview"; // Setze die ID für das Canvas
+
+    // 3. Erzeuge das <button>-Element
+    const button = document.createElement("button");
+    button.id = "play-pause"; // Setze die ID für den Button
+    button.textContent = "Play"; // Setze den Textinhalt des Buttons
+
+    // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
+    audioContainer.appendChild(canvas);
+    audioContainer.appendChild(button);
+    audioContainer.appendChild(audio);
+    // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+    imageContainer.appendChild(audioContainer);
+  } else {
+    const parts = objekt.media.split(",");
+    let trimmedPart;
+    let img;
+
+    imageContainer.classList.add("comment-img");
+    if (parts.length > 1) imageContainer.classList.add("multi");
+    for (const part of parts) {
+      trimmedPart = part.trim();
+      img = document.createElement("img");
+      img.src = tempMedia(trimmedPart);
+      img.alt = "";
+      // img.addEventListener("click", function () {
+      //   showImg(img);
+      // });
+      imageContainer.appendChild(img);
+    }
   }
 
   const title = document.getElementById("comment-title");
   title.innerText = objekt.title;
   const text = document.getElementById("comment-text");
   text.innerText = objekt.mediadescription;
+
   // console.log(objekt.id );
   // console.log(objekt.media );
   let mostliked = [];
-  let maxliked = 0;
-  let maxlikedname = "";
-  let counter = 0;
   const comments = document.getElementById("comments");
+  document.getElementById("comment-sum").innerText = objekt.amountcomments;
+  document.getElementById("addComment").setAttribute("postID", objekt.id);
+
   comments.innerHTML = "";
   objekt.comments
     .slice()
@@ -688,6 +834,7 @@ function postClicked(objekt) {
       comment.appendChild(commentParagraph);
       comment.appendChild(likeContainer);
       comments.appendChild(comment);
+      // if (objekt.contenttype === "audio") createTemporaryAudioElement(document.getElementById(objekt.media));
     });
   mostliked.sort((a, b) => b.liked - a.liked);
   console.log(mostliked);
@@ -695,13 +842,16 @@ function postClicked(objekt) {
   mostlikedcontainer.innerHTML = "";
   for (let i = 0; i < 3 && i < mostliked.length; i++) {
     const img = document.createElement("img");
-    img.src =mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
+
+    img.src = mostliked[i].img
+      ? tempMedia(mostliked[i].img.replace("media/", ""))
+      : "svg/noname.svg";
     mostlikedcontainer.appendChild(img);
   }
   const topcommenter = document.createElement("span");
   topcommenter.textContent = mostliked.length
     ? mostliked[0].name + " and " + objekt.amountlikes + " others liked"
-    : "no one like";
+    : "no one liked";
   mostlikedcontainer.appendChild(topcommenter);
 }
 function timeAgo(datetime) {
@@ -717,18 +867,16 @@ function timeAgo(datetime) {
   const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
   const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
 
-  if (seconds < 60) return `${seconds} seconds ago`;
-  if (minutes < 60) return `${minutes} minutes ago`;
-  if (hours < 24) return `${hours} hours ago`;
-  if (days < 7) return `${days} days ago`;
-  if (weeks < 4) return `${weeks} weeks ago`;
-  if (months < 12) return `${months} months ago`;
-  return `${years} years ago`;
+  if (seconds < 60)
+    return `${seconds} second` + (seconds > 1 ? "s ago" : " ago");
+  if (minutes < 60)
+    return `${minutes} minute` + (minutes > 1 ? "s ago" : " ago");
+  if (hours < 24) return `${hours} hour` + (hours > 1 ? "s ago" : " ago");
+  if (days < 7) return `${days} day` + (days > 1 ? "s ago" : " ago");
+  if (weeks < 4) return `${weeks} week` + (weeks > 1 ? "s ago" : " ago");
+  if (months < 12) return `${months} month` + (months > 1 ? "s ago" : " ago");
+  return `${years} year` + (years > 1 ? "s ago" : " ago");
 }
-
-// // Beispielaufruf
-// const exampleTimestamp = Date.now() - 90000000; // Vor 90 Millionen Millisekunden (25 Stunden)
-// console.log(timeAgo(exampleTimestamp));
 
 // let isDragging = false;
 // let startX = 0;
@@ -872,34 +1020,50 @@ const header = document.getElementById("header");
 
 // Responsiveness: Prüfen bei Fensteränderungen
 
-async function processFiles(files) {
-  const previewContainer = document.getElementById("preview-container");
+async function processFiles(files, id) {
+  const lastDashIndex = id.lastIndexOf("-");
+  id = id.substring(lastDashIndex + 1);
+
+  const previewContainer = document.getElementById("preview-" + id);
   let previewItem;
   files.forEach(async (file) => {
-    if (!file.type.startsWith("image/")) {
-      info("Information", `${file.name} ist keine Bilddatei.`);
-      return;
-    }
+    // if (!file.type.startsWith("image/")) {
+    //   info("Information", `${file.name} ist keine Bilddatei.`);
+    //   return;
+    // }
+
     previewItem = document.createElement("div");
     previewItem.className = "preview-item";
-    previewItem.innerHTML = `
-    <p>${file.name}</p>
-    <img class="image-wrapper none" alt="Vorschau" />
-    <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-    <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">
-  `;
+    const type = file.type.substring(0, 5);
+    if (type === "audio") {
+      previewItem.innerHTML = `
+      <p>${file.name}</p><canvas id="${file.name}"></canvas>
+      <audio class="image-wrapper custom-audio none" alt="Vorschau" controls=""></audio>
+      <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+      <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
+    } else if (type === "image") {
+      previewItem.innerHTML = `
+      <p>${file.name}</p>
+      <img class="image-wrapper none" alt="Vorschau" />
+      <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+      <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
+    }
+
     previewContainer.appendChild(previewItem);
-
     const progressBar = previewItem.querySelector("progress");
-    const imageElement = previewItem.querySelector("img");
-
+    let element;
+    if (type === "image") {
+      element = previewItem.querySelector("img");
+    } else if (type === "audio") {
+      element = previewItem.querySelector("audio");
+    }
     const base64 = await convertImageToBase64(file, progressBar);
-
-    imageElement.src = `data:image/webp;base64,${base64}`;
+    element.src = base64;
     // imageElement.style.display = "block";
-    imageElement.classList.remove("none");
-    imageElement.nextElementSibling.remove();
-    imageElement.nextElementSibling.classList.remove("none");
+    element.classList.remove("none");
+    element.nextElementSibling.remove();
+    element.nextElementSibling.classList.remove("none");
+    initAudioplayer(file.name,base64);
   });
   document.querySelectorAll(".deletePost").forEach(addDeleteListener);
 }
@@ -917,46 +1081,38 @@ function handleDelete(event) {
   event.preventDefault(); // Verhindert Standardverhalten (z. B. Link-Weiterleitung)
   console.log("Post löschen:", event.target);
   event.target.parentElement.remove();
-  document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
-}
-
-function createPreviewItem(fileName) {
-  const previewItem = document.createElement("div");
-  previewItem.className = "preview-item";
-
-  previewItem.innerHTML = `
-    
-    <p>${fileName}</p>
-    <img class="image-wrapper none" alt="Vorschau" />
-    <img src="svg/logo_farbe.svg" class="loading" alt="loading">
-    <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">
-  `;
-
-  return previewItem;
+  // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
 
 async function convertImageToBase64(file, progressBar) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
     const reader = new FileReader();
+    const type = file.type.substring(0, 5);
+    if (type === "audio") {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () =>
+        reject(new Error("Failed to read file as Base64."));
+    } else if (type === "image") {
+      const img = new Image();
+      reader.onload = () => {
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
 
-    reader.onload = () => {
-      img.src = reader.result;
-    };
-    reader.onerror = reject;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
 
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-
-      // Konvertiere zu WebP und hole die Base64-Daten
-      const webpDataUrl = canvas.toDataURL("image/webp");
-      resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
-    };
+        // Konvertiere zu WebP und hole die Base64-Daten
+        const webpDataUrl = canvas.toDataURL("image/webp");
+        resolve(webpDataUrl);
+        // resolve(webpDataUrl.split(",")[1]); // Base64-Teil zurückgeben
+      };
+    }
 
     reader.readAsDataURL(file);
   });
@@ -986,4 +1142,87 @@ function restoreFilterSettings() {
       }
     });
   }
+}
+function connectImagesWithGradient(container, img1, img2) {
+  // Container und Bilder auswählen
+  const containerEl = document.querySelector(container);
+  const img1El = document.querySelector(img1);
+  const img2El = document.querySelector(img2);
+
+  // Sicherstellen, dass Elemente existieren
+  if (!containerEl || !img1El || !img2El) {
+    console.error("Eines der Elemente wurde nicht gefunden.");
+    return;
+  }
+
+  // Sicherstellen, dass der Container relativ positioniert ist
+  const computedStyle = getComputedStyle(containerEl);
+  if (computedStyle.position === "static") {
+    containerEl.style.position = "relative";
+  }
+
+  // SVG erstellen
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  const defs = document.createElementNS(svgNS, "defs");
+  const gradient = document.createElementNS(svgNS, "linearGradient");
+  const path = document.createElementNS(svgNS, "path");
+
+  // Gradient definieren
+  gradient.setAttribute("id", "gradient");
+  gradient.setAttribute("x1", "0%");
+  gradient.setAttribute("y1", "0%");
+  gradient.setAttribute("x2", "100%");
+  gradient.setAttribute("y2", "0%");
+
+  // Farbverlauf von Weiß zu Transparent
+  const stop1 = document.createElementNS(svgNS, "stop");
+  stop1.setAttribute("offset", "0%");
+  stop1.setAttribute("stop-color", "white");
+  stop1.setAttribute("stop-opacity", "1");
+
+  const stop2 = document.createElementNS(svgNS, "stop");
+  stop2.setAttribute("offset", "100%");
+  stop2.setAttribute("stop-color", "white");
+  stop2.setAttribute("stop-opacity", "0");
+
+  gradient.appendChild(stop1);
+  gradient.appendChild(stop2);
+  defs.appendChild(gradient);
+
+  // SVG-Eigenschaften setzen
+  svg.style.position = "absolute";
+  svg.style.top = "0";
+  svg.style.left = "0";
+  svg.style.width = "100%";
+  svg.style.height = "100%";
+  svg.style.pointerEvents = "none"; // SVG nicht anklickbar machen
+  svg.appendChild(defs);
+  svg.appendChild(path);
+  containerEl.appendChild(svg);
+
+  // Path für den Bogen setzen
+  const rect1 = img1El.getBoundingClientRect();
+  const rect2 = img2El.getBoundingClientRect();
+  const containerRect = containerEl.getBoundingClientRect();
+
+  // Koordinaten relativ zum Container berechnen
+  const x1 =
+    rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
+  const y1 =
+    rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
+  const x2 =
+    rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
+  const y2 =
+    rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
+
+  // Kontrollpunkt für den Bogen berechnen (Mitte zwischen Punkten, leicht nach oben versetzt)
+  const controlX = (x1 + x2) / 2;
+  const controlY = Math.min(y1, y2) - 50;
+
+  const d = `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2}`;
+  path.setAttribute("d", d);
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "url(#gradient)");
+  path.setAttribute("stroke-width", 2);
 }

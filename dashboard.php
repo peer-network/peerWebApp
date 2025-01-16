@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 include 'phpheader.php';
 ?>
 <!DOCTYPE html>
@@ -11,6 +12,8 @@ include 'phpheader.php';
     <script src="sw_instal.min.js" async></script>
     <script src="js/lib.min.js?" defer></script>
     <script src="js/dashboard.js" defer></script>
+    <script src="js/audio.js" async></script>
+
 
     <?php
     $beschreibung = 'Peer ist ein blockchainbasiertes soziales Netzwerk. Die Blockchain-Technologie schützt die Privatsphäre der Benutzer:innen und bietet ihnen die Möglichkeit die eigenen Daten kontrolliert zu monetarisieren.';
@@ -23,7 +26,7 @@ include 'phpheader.php';
     <header>
         <svg class="none">
             <symbol id="post-comment" viewBox="0 0 44 45">
-                <path d="m4.4 33c0.092-0.449 0.0274-0.915-0.183-1.32-1.42-2.74-2.22-5.86-2.22-9.17 0-3.96 1.17-7.82 3.37-11.1 2.2-3.29 5.32-5.85 8.98-7.37s7.68-1.91 11.6-1.14c3.88 0.772 7.44 2.68 10.2 5.47 2.8 2.8 4.7 6.36 5.47 10.2s0.376 7.9-1.14 11.6c-1.51 3.65-4.08 6.78-7.37 8.98s-7.16 3.37-11.1 3.37c-3.31 0-6.43-0.8-9.17-2.22-0.407-0.21-0.873-0.275-1.32-0.183l-8.94 1.83 1.83-8.94z" stroke="#FFFAFA" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+                <path d="m4.4 33c0.092-0.449 0.0274-0.915-0.183-1.32-1.42-2.74-2.22-5.86-2.22-9.17 0-3.96 1.17-7.82 3.37-11.1 2.2-3.29 5.32-5.85 8.98-7.37s7.68-1.91 11.6-1.14c3.88 0.772 7.44 2.68 10.2 5.47 2.8 2.8 4.7 6.36 5.47 10.2s0.376 7.9-1.14 11.6c-1.51 3.65-4.08 6.78-7.37 8.98s-7.16 3.37-11.1 3.37c-3.31 0-6.43-0.8-9.17-2.22-0.407-0.21-0.873-0.275-1.32-0.183l-8.94 1.83 1.83-8.94z" fill="none" stroke="#FFFAFA" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
             </symbol>
             <symbol id="post-like" viewBox="0 0 48 45">
                 <path id="mener" d="m34.3 2.5c-4.5 0-8.38 2.66-10.3 6.54-1.95-3.88-5.83-6.54-10.3-6.54-6.45 0-11.7 5.46-11.7 12.2s4 12.9 9.16 17.9 12.8 9.88 12.8 9.88 7.42-4.74 12.8-9.88c5.78-5.48 9.16-11.2 9.16-17.9s-5.22-12.2-11.7-12.2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
@@ -229,19 +232,21 @@ include 'phpheader.php';
     <div id="overlay" class="none ">
         <div id="cardClicked" class="none">
             <div class="cImg">
-                <div id="comment-title"></div>
                 <div id="comment-img-container">
                     <img id="comment-img" src="" alt="">
                 </div>
+                <div id="comment-title"></div>
                 <div id="comment-text"></div>
                 <div id="tags"></div>
-                <div id="postperformance"></div>
+                <div id="postperformance">
+
+                </div>
             </div>
             <div id="comments-container">
                 <div id="comments-header">
                     <div id="mostliked"></div>
                     <div class="commentsButtons">
-                        <div  class="postViews">
+                        <div class="postViews">
                             <svg>
                                 <use href="#post-view" />
                             </svg>
@@ -251,32 +256,147 @@ include 'phpheader.php';
                         <div id="comments-buttons">
                             <img src="svg/share.svg" class="postViews">
                             <img src="svg/bookmark.svg" class="postViews">
+                            <img src="svg/report.svg" class="postViews">
                         </div>
                     </div>
+                    <div class="flex centvert csum">
+                        <span>Comments</span>
+                        <svg class="btn">
+                            <use href="#post-comment" />
+                        </svg>
+                        <span id="comment-sum"></span>
 
+                        <div id="addComment" class="icon-add"><img src="svg/plus2.svg" class="icon" alt="add comment"></div>
+                    </div>
                 </div>
                 <div id="comments" class="comments">
 
                 </div>
 
             </div>
-            <!-- <div id="addComments" class="icon-add"><img src="svg/plus2.svg" alt="add comment"></div> -->
             <div id="closeComments" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
         </div>
 
+
+
         <div id="addPost" class="none ">
-            <form id="newPost" class="" method="post">
-                <label for="bildueberschrift">Überschrift:</label>
-                <input type="text" id="bildueberschrift" name="text-input" maxlength="150" required>
-                <label for="bildbeschreibung">Beschreibung:</label>
-                <input type="text" id="bildbeschreibung" name="text-input" maxlength="150" required>
-                <div id="drop-area">
-                    <p>Ziehe deine Bilder hierher oder klicke, um sie hochzuladen</p>
-                    <input type="file" id="file-input" accept="image/*" hidden multiple />
+            <input id="createImage" type="radio" name="postArt" value="image/*" checked>
+            <input id="createNotes" type="radio" name="postArt" value=".txt">
+            <input id="createAudio" type="radio" name="postArt" value="audio/*">
+            <input id="createVideo" type="radio" name="postArt" value="video/*">
+            <input id="createPodcast" type="radio" name="postArt" disabled>
+            <input id="createShorts" type="radio" name="postArt" disabled>
+            <input id="createPolls" class="filterButton" type="radio" name="postArt" disabled>
+            <input id="createQuiz" type="radio" name="postArt" disabled>
+            <input id="createEvent" type="radio" name="postArt" disabled>
+            <menu class="filter select">
+                <div class="center">
+                    <h2>Create a new Post</h2>
+                    <p>Choose a category to get started:</p>
                 </div>
-                <div id="preview-container" class="blockscroll"></div>
-                <button class="button" id="createPost">create</button>
+                <div class="filterGroup">
+                    <label id="labelCreateImage" for="createImage" class="filterButton" title="Fotos"><img src="svg/filterImage.svg" alt="Image create"></label>
+                    <label id="labelCreateNotes" for="createNotes" class="filterButton" title="Notes" name="notes"><img src="svg/filterNotes.svg" alt="Notes create"></label>
+                    <label id="labelCreateAudio" for="createAudio" class="filterButton" title="Audio"><img src="svg/filterMusic.svg" alt="Audio create"></label>
+                </div>
+                <div class="filterGroup">
+                    <label id="labelCreateVideo" for="createVideo" class="filterButton" title="Video"><img src="svg/filterVideo.svg" alt="Video create"></label>
+                    <label id="labelCreatePodcast" for="createPodcast" class="filterButton" title="playlist"><img src="svg/filterPodcast.svg" alt="Podcast create"></label>
+                    <label id="labelCreateShorts" for="createShorts" class="filterButton" title="local"><img src="svg/filterFickFuck.svg" alt="Shorty create"></label>
+                </div>
+                <div class="filterGroup">
+                    <label id="labelCreatePolls" for="createPolls" class="filterButton" title="Polls"><img src="svg/filterPolls.svg" alt="Polls create"></label>
+                    <label id="labelCreateQuiz" for="createQuiz" class="filterButton" title="Quiz"><img src="svg/filterQuiz.svg" alt="Quiz create"></label>
+                    <label id="labelCreateEvent" for="createEvent" class="filterButton" title="Event"><img src="svg/filterEvent.svg" alt="Event create"></label>
+                </div>
+            </menu>
+            <form id="newImagePost" class="upload" method="post">
+                <h2>Upload File</h2>
+                <div id="drop-area-image" class="drop-area">
+                    <div>
+                        <p>Drag and Drop file here</p>
+                        <p>or <u>Choose File</u></p>
+                    </div>
+
+                    <img class="filterButton" src="svg/filterImage.svg" alt="Image upload">
+                    <div>
+                        <p>Supported formats:
+                        <p>.png, .jpg, .jpeg, .gif, .webp</p>
+                    </div>
+
+                    <input type="file" id="file-input-image" accept="image/*" hidden multiple />
+                </div>
+                <p>The maximum file size is 25MB</p>
+
+                <!-- <label for="bildueberschrift">Überschrift:</label> -->
+                <input type="text" id="titleImage" placeholder="Add title" name="text-input" maxlength="150" required>
+                <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
+                <textarea id="descriptionImage" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
+                <div id="preview-image" class="blockscroll preview-container"></div>
+                <button class="button" id="createPostImage">Upload</button>
             </form>
+            <form id="newAudioPost" class="upload" method="post">
+                <h2>Upload File</h2>
+                <div id="drop-area-audio" class="drop-area">
+                    <div>
+                        <p>Drag and Drop file here</p>
+                        <p>or <u>Choose File</u></p>
+                    </div>
+
+                    <img class="filterButton" src="svg/filterMusic.svg" alt="Audio upload">
+                    <div>
+                        <p>Supported formats:
+                        <p>.mp3, .wav, .flac, .aac</p>
+                    </div>
+
+                    <input type="file" id="file-input-audio" accept="Audio/*" hidden />
+                </div>
+                <p>The maximum file size is 200MB</p>
+
+                <!-- <label for="bildueberschrift">Überschrift:</label> -->
+                <input type="text" id="titleAudio" placeholder="Add title" name="text-input" maxlength="150" required>
+                <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
+                <textarea id="descriptionAudio" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
+                <div id="preview-audio" class="blockscroll preview-container"></div>
+                <button class="button" id="createPostAudio">Upload</button>
+
+            </form>
+            <form id="newVideoPost" class="upload" method="post">
+                <h2>Upload File</h2>
+                <div id="drop-area-video" class="drop-area">
+                    <div>
+                        <p>Drag and Drop file here</p>
+                        <p>or <u>Choose File</u></p>
+                    </div>
+                    <img class="filterButton" src="svg/filterVideo.svg" alt="Video upload">
+                    <div>
+                        <p>Supported formats:
+                        <p>.mp4, .avi, .mov, .webm</p>
+                    </div>
+
+                    <input type="file" id="file-input-video" accept="Video/*" hidden />
+                </div>
+                <p>The maximum file size is 3GB</p>
+
+                <!-- <label for="bildueberschrift">Überschrift:</label> -->
+                <input type="text" id="titleVideo" placeholder="Add title" name="text-input" maxlength="150" required>
+                <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
+                <textarea id="descriptionVideo" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
+                <div id="preview-video" class="blockscroll preview-container"></div>
+            </form>
+            <div class="addTags">
+                <h4># Add tags</h4>
+                <p>include up to 10 tags</p>
+                <input type="text" placeholder="Search for tags">
+                <div id="tagsContainer">
+                    <div id="tagsSelected">
+                        <div>bitcoin x</div>
+                        <div>pathetic x</div>
+                        <div>election2k24 x</div>
+                    </div>
+                    <p>+ Create tag</p>
+                </div>
+            </div>
             <div id="closeAddPost" class="btClose"><img src="svg/plus2.svg" alt="close"></div>
         </div>
     </div>
