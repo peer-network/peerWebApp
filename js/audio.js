@@ -1,11 +1,14 @@
+let audioplayer;
 function initAudioplayer(canvasID, url) {
   const canvas = document.getElementById(canvasID);
   const canvasContext = canvas.getContext("2d");
   canvas.width = 800;
   canvas.height = 100;
-
-  // const audio = new Audio("https://media.getpeer.eu/audio/bf1e600b-2cc4-43b2-9d2c-c765c6572d56_1.mp3");
-  // const playPauseButton = document.getElementById("play-pause");
+  if (audioplayer) {
+    audioplayer.pause();
+  }
+  audioplayer = new Audio(url);
+  const playPauseButton = document.getElementById("play-pause");
 
   let audioContext; // AudioContext für Chrome-Kompatibilität
   let waveformData = []; // Gespeicherte Wellenformdaten
@@ -51,7 +54,7 @@ function initAudioplayer(canvasID, url) {
       canvasContext.lineTo(x, canvas.height - y);
     });
     // canvasContext.lineTo(canvas.width, middle);
-    canvasContext.strokeStyle = "#888888"; // Graue Welle für Vorschau
+    canvasContext.strokeStyle = "#007aff"; // Graue Welle für Vorschau
     canvasContext.lineWidth = 1;
     canvasContext.lineCap = "round";
     canvasContext.stroke();
@@ -62,7 +65,7 @@ function initAudioplayer(canvasID, url) {
       canvasContext.beginPath();
       canvasContext.moveTo(progressX, 0);
       canvasContext.lineTo(progressX, canvas.height);
-      canvasContext.strokeStyle = "#007bff"; // Blau für die Fortschrittslinie
+      canvasContext.strokeStyle = "#fff"; // Blau für die Fortschrittslinie
       canvasContext.lineWidth = 2;
       canvasContext.stroke();
     }
@@ -70,29 +73,29 @@ function initAudioplayer(canvasID, url) {
 
   // Fortschritt aktualisieren
   function updateProgress() {
-    const progress = audio.currentTime / audio.duration; // Fortschritt berechnen
-    drawWaveform(progress); // Fortschrittslinie zeichnen
-    if (!audio.paused) {
-      requestAnimationFrame(updateProgress); // Aktualisiere bei laufendem Audio
+    if (audioplayer && !audioplayer.paused) {
+      const progress = audioplayer.currentTime / audioplayer.duration; // Fortschritt berechnen
+      drawWaveform(progress); // Fortschrittslinie zeichnen
+      requestAnimationFrame(updateProgress); // Aktualisiere bei laufendem  audioplayer
     }
   }
 
   // Play/Pause-Toggle
-  // playPauseButton.addEventListener("click", async () => {
-  //   if (!audioContext) {
-  //     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  //   }
+  playPauseButton.addEventListener("click", async () => {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
 
-  //   if (audio.paused) {
-  //     await audioContext.resume(); // Für Chrome: AudioContext aktivieren
-  //     audio.play();
-  //     playPauseButton.textContent = "Pause";
-  //     updateProgress(); // Fortschritt starten
-  //   } else {
-  //     audio.pause();
-  //     playPauseButton.textContent = "Play";
-  //   }
-  // });
+    if (audioplayer.paused) {
+      await audioContext.resume(); // Für Chrome: AudioContext aktivieren
+      audioplayer.play();
+      playPauseButton.textContent = "Pause";
+      updateProgress(); // Fortschritt starten
+    } else {
+      audioplayer.pause();
+      playPauseButton.textContent = "Play";
+    }
+  });
 
   // Klick auf die Wellenform
   canvas.addEventListener("click", (event) => {
@@ -103,13 +106,13 @@ function initAudioplayer(canvasID, url) {
     const clickX = (event.clientX - rect.left) * scaleX; // Umrechnung auf interne Zeichenfläche
     const newProgress = clickX / canvas.width; // Fortschritt berechnen (0 bis 1)
 
-    if (!isNaN(audio.duration)) {
-      const newTime = newProgress * audio.duration; // Neue Zeit berechnen
-      const wasPlaying = !audio.paused; // Prüfen, ob das Audio gerade abgespielt wird
-      audio.pause(); // Audio anhalten
-      audio.currentTime = newTime; // Neue Abspielposition setzen
+    if (!isNaN(audioplayer.duration)) {
+      const newTime = newProgress * audioplayer.duration; // Neue Zeit berechnen
+      const wasPlaying = !audioplayer.paused; // Prüfen, ob das audioplayer gerade abgespielt wird
+      audioplayer.pause(); // audioplayer anhalten
+      audioplayer.currentTime = newTime; // Neue Abspielposition setzen
       if (wasPlaying) {
-        audio.play(); // Wiedergabe erneut starten, falls sie vorher lief
+        audioplayer.play(); // Wiedergabe erneut starten, falls sie vorher lief
       }
       console.log(`Abspielposition geändert auf: ${newTime}s`);
     } else {
@@ -120,8 +123,7 @@ function initAudioplayer(canvasID, url) {
   });
   async function drawWaveformFromBase64(base64Audio, canvas) {
     const canvasContext = canvas.getContext("2d");
-    const audioContext = new (window.AudioContext ||
-      window.webkitAudioContext)();
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     // 1. Base64-Dekodierung in ArrayBuffer
     const binaryString = atob(base64Audio.split(",")[1]); // Base64-Daten ohne Präfix

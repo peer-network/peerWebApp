@@ -317,8 +317,7 @@ h1 {
     display: block !important;
     overflow: scroll;
   }
-  .cImg{
-
+  .cImg {
   }
 
   .comments {
@@ -335,6 +334,7 @@ h1 {
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
   }
 }
@@ -419,8 +419,8 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.filterApply > button {
-}
+/* .filterApply > button {
+} */
 
 .filterGroup {
   width: 100%;
@@ -441,10 +441,10 @@ h1 {
 #overlay input[type="radio"] {
   display: none;
 }
-#labelCreatePodcast img ,
-#labelCreateShorts img ,
-#labelCreatePolls img ,
-#labelCreateQuiz img ,
+#labelCreatePodcast img,
+#labelCreateShorts img,
+#labelCreatePolls img,
+#labelCreateQuiz img,
 #labelCreateEvent img {
   cursor: not-allowed; /* Zeigt den nicht erlaubten Mauszeiger */
   opacity: 0.6; /* Optionale Transparenz */
@@ -452,14 +452,14 @@ h1 {
 
 .filterGroup input[type="checkbox"]:checked + label img,
 .filterGroup input[type="radio"]:checked + label img,
-#createImage:checked ~ menu .filterGroup > #labelCreateImage img ,
-#createNotes:checked ~ menu .filterGroup > #labelCreateNotes img ,
-#createAudio:checked ~ menu .filterGroup > #labelCreateAudio img ,
-#createVideo:checked ~ menu .filterGroup > #labelCreateVideo img ,
-#createPodcast:checked ~ menu .filterGroup > #labelCreatePodcast img ,
-#createShorts:checked ~ menu .filterGroup > #labelCreateShorts img ,
-#createPolls:checked ~ menu .filterGroup > #labelCreatePolls img ,
-#createQuiz:checked ~ menu .filterGroup > #labelCreateQuiz img ,
+#createImage:checked ~ menu .filterGroup > #labelCreateImage img,
+#createNotes:checked ~ menu .filterGroup > #labelCreateNotes img,
+#createAudio:checked ~ menu .filterGroup > #labelCreateAudio img,
+#createVideo:checked ~ menu .filterGroup > #labelCreateVideo img,
+#createPodcast:checked ~ menu .filterGroup > #labelCreatePodcast img,
+#createShorts:checked ~ menu .filterGroup > #labelCreateShorts img,
+#createPolls:checked ~ menu .filterGroup > #labelCreatePolls img,
+#createQuiz:checked ~ menu .filterGroup > #labelCreateQuiz img,
 #createEvent:checked ~ menu .filterGroup > #labelCreateEvent img {
   filter: brightness(1);
   background-color: transparent !important;
@@ -704,8 +704,7 @@ h1 {
   transition: transform 0.1s ease-out;
   /* Glatte Animation */
   transform-origin: var(--transform-origin-x) var(--transform-origin-y);
-  transform: translate(var(--translate-x), var(--translate-y))
-    scale(var(--scale));
+  transform: translate(var(--translate-x), var(--translate-y)) scale(var(--scale));
   position: absolute !important;
   /* top: var(--top, 0) !important;
   left: var(--left, 0) !important; */
@@ -771,8 +770,7 @@ h1 {
 .shadow {
   height: 100%;
   width: 100%;
-  box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5),
-    inset 0 0 2rem #000;
+  box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000;
   position: absolute;
 }
 
@@ -792,7 +790,6 @@ h1 {
   height: 2rem;
   display: flex;
   justify-content: space-evenly;
-  gap: -2.5rem;
   bottom: 0.7rem;
   font-size: 1.1rem;
   margin: 0 -0;
@@ -892,8 +889,8 @@ h1 {
   display: none;
 }
 
-#postView {
-}
+/* #postView {
+} */
 
 .comment {
   position: relative;
@@ -954,6 +951,7 @@ h1 {
   height: 100vh;
   z-index: 2;
   background-color: #4848487d;
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   z-index: 2;
 }
@@ -974,6 +972,7 @@ h1 {
   border-radius: 2rem;
   box-shadow: 1rem 1rem 3rem black, 0 0 2rem black inset;
   background-color: var(--background-color);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 
@@ -985,14 +984,9 @@ h1 {
   width: 100vw;
   height: 100vh;
   background-color: #4848487d;
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   z-index: 2;
-  /* 
-  left: 0;
-  top: 0; */
-
-  /* background-color: #000000cc;
-  backdrop-filter: blur(5px); */
 }
 
 .cImg {
@@ -1017,6 +1011,7 @@ h1 {
   height: 50vh;
   max-height: 50vh;
   /* scroll-snap-type: x mandatory; */
+  align-items: center;
 }
 
 #comment-img-container img {
@@ -1175,6 +1170,7 @@ h1 {
   width: 100vw;
   height: 100vh;
   background-color: #363636e6;
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   z-index: 2;
   display: grid;
@@ -1205,7 +1201,8 @@ h1 {
   margin-top: 11rem;
   padding: 1.5rem;
 }
-#createPostImage, #createPostAudio {
+#createPostImage,
+#createPostAudio {
   position: absolute;
   right: 4rem;
   bottom: 4rem;
@@ -1254,7 +1251,7 @@ h1 {
   overflow-x: scroll;
   flex-direction: row;
   justify-content: flex-start;
-  width: 100vw;
+  width: 100%;
 }
 
 .preview-item {
@@ -1270,7 +1267,25 @@ h1 {
   align-content: center;
   align-items: center;
 }
-
+.audio-item {
+  width: 96%;
+  height: auto;
+}
+.audio-item canvas {
+  width: 100%;
+  height: auto;
+}
+#audio-container {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+#audio-container canvas {
+  width: 100%;
+  height: 8rem;
+}
 .preview-item p {
   margin-bottom: 1rem;
 }
@@ -1391,6 +1406,7 @@ h1 {
 } */
 /* Stil für das Audio-Element */
 .custom-audio {
+  display: none;
   width: 90%; /* Breite des Players */
   height: 4rem; /* Höhe des Players */
   background-color: #f0f0f0; /* Hintergrundfarbe */

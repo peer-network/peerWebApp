@@ -1,8 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "peer-cache-v10";
-
-
+const CACHE_NAME = "peer-cache-v11";
 
 // Installations-Ereignis: Basis-Assets cachen
 self.addEventListener("install", (event) => {
@@ -41,7 +39,7 @@ self.addEventListener("activate", (event) => {
 
 // Fetch Event - Handle Requests
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" ) {
+  if (event.request.method !== "GET") {
     /* If we don't block the event as shown below, then the request will go to
            the network as usual.
         */
@@ -56,11 +54,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Stale-While-Revalidate für PHP, JS, CSS
-  if (
-    request.url.endsWith(".php") ||
-    request.url.includes(".js") ||
-    request.url.includes(".css")
-  ) {
+  if (request.url.endsWith(".php") || request.url.includes(".js") || request.url.includes(".css")) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(request).then((cachedResponse) => {
@@ -74,7 +68,10 @@ self.addEventListener("fetch", (event) => {
     );
     return;
   }
-
+  if (event.request.url.endsWith(".mp3")) {
+    event.respondWith(fetchAndProcessAudio(event.request));
+    return;
+  }
   // Cache-First für alle anderen Dateien
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
@@ -91,3 +88,12 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+async function fetchAndProcessAudio(request) {
+  const response = await fetch(request);
+  const audioArrayBuffer = await response.arrayBuffer();
+
+  // Hier kannst du den Audio-Puffer verarbeiten, falls nötig.
+  return new Response(audioArrayBuffer, {
+    headers: { "Content-Type": "audio/mpeg" },
+  });
+}

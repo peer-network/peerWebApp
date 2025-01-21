@@ -29,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (window.matchMedia("(display-mode: standalone)").matches) {
     document.documentElement.requestFullscreen().catch((err) => {
-      console.warn(
-        `Vollbildmodus konnte nicht aktiviert werden: ${err.message}`
-      );
+      console.warn(`Vollbildmodus konnte nicht aktiviert werden: ${err.message}`);
     });
   }
 
@@ -94,73 +92,63 @@ document.addEventListener("DOMContentLoaded", () => {
   const observer = new IntersectionObserver(observerCallback, observerOptions);
   observer.observe(footer);
 
-  document
-    .getElementById("btAddPost")
-    .addEventListener("click", function startAddPost() {
-      togglePopup("addPost");
-    });
+  document.getElementById("btAddPost").addEventListener("click", function startAddPost() {
+    togglePopup("addPost");
+  });
   const closeAddPost = document.getElementById("closeAddPost");
   closeAddPost.addEventListener("click", () => {
     togglePopup("addPost");
   });
-  document
-    .getElementById("createPostImage")
-    .addEventListener("click", async function createPost(event) {
-      event.preventDefault(); // Prevent form reload
-      const title = document.getElementById("titleImage").value;
-      const beschreibung = document.getElementById("descriptionImage").value;
-      const imageWrappers = document.querySelectorAll(".image-wrapper");
+  document.getElementById("createPostImage").addEventListener("click", async function createPost(event) {
+    event.preventDefault(); // Prevent form reload
+    const title = document.getElementById("titleImage").value;
+    const beschreibung = document.getElementById("descriptionImage").value;
+    const imageWrappers = document.querySelectorAll(".image-wrapper");
 
-      const combinedHTML = Array.from(imageWrappers)
-        .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-        .join(" "); // Concatenate the HTML content with a space in between
-      if (
-        await sendCreatePost({
-          title: title,
-          media: combinedHTML,
-          mediadescription: beschreibung,
-          contenttype: "image",
-        })
-      ) {
-        togglePopup("addPost");
+    const combinedHTML = Array.from(imageWrappers)
+      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+      .join(" "); // Concatenate the HTML content with a space in between
+    if (
+      await sendCreatePost({
+        title: title,
+        media: combinedHTML,
+        mediadescription: beschreibung,
+        contenttype: "image",
+      })
+    ) {
+      togglePopup("addPost");
 
-        location.reload();
-      }
-    });
-    document
-    .getElementById("createPostAudio")
-    .addEventListener("click", async function createPost(event) {
-      event.preventDefault(); // Prevent form reload
-      const title = document.getElementById("titleAudio").value;
-      const beschreibung = document.getElementById("descriptionImage").value;
-      const imageWrappers = document.querySelectorAll(".image-wrapper");
+      location.reload();
+    }
+  });
+  document.getElementById("createPostAudio").addEventListener("click", async function createPost(event) {
+    event.preventDefault(); // Prevent form reload
+    const title = document.getElementById("titleAudio").value;
+    const beschreibung = document.getElementById("descriptionImage").value;
+    const imageWrappers = document.querySelectorAll(".image-wrapper");
 
-      const combinedHTML = Array.from(imageWrappers)
-        .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
-        .join(" "); // Concatenate the HTML content with a space in between
-      if (
-        await sendCreatePost({
-          title: title,
-          media: combinedHTML,
-          mediadescription: beschreibung,
-          contenttype: "audio",
-        })
-      ) {
-        togglePopup("addPost");
+    const combinedHTML = Array.from(imageWrappers)
+      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+      .join(" "); // Concatenate the HTML content with a space in between
+    if (
+      await sendCreatePost({
+        title: title,
+        media: combinedHTML,
+        mediadescription: beschreibung,
+        contenttype: "audio",
+      })
+    ) {
+      togglePopup("addPost");
 
-        location.reload();
-      }
-    });
+      location.reload();
+    }
+  });
 
-  const checkboxes = document.querySelectorAll(
-    '#filter input[type="checkbox"]'
-  );
+  const checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
-      const elements = document.querySelectorAll(
-        `[content="${event.target.name}"]`
-      );
+      const elements = document.querySelectorAll(`[content="${event.target.name}"]`);
       if (event.target.checked) {
         elements.forEach((element) => {
           element.classList.remove("none");
@@ -216,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       dropArea: document.getElementById("drop-area-video"),
       fileInput: document.getElementById("file-input-video"),
-    }
+    },
   ];
 
   // Gemeinsame Funktionen für die Event-Listener
@@ -258,14 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Drag-and-Drop-Events
     dropArea.addEventListener("dragover", (e) => handleDragOver(e, dropArea));
     dropArea.addEventListener("dragleave", () => handleDragLeave(dropArea));
-    dropArea.addEventListener("drop", (e) =>
-      handleDrop(e, dropArea, processFiles)
-    );
+    dropArea.addEventListener("drop", (e) => handleDrop(e, dropArea, processFiles));
 
     // File-Input-Change-Event
-    fileInput.addEventListener("change", (e) =>
-      handleFileChange(e, processFiles)
-    );
+    fileInput.addEventListener("change", (e) => handleFileChange(e, processFiles));
   });
 
   //   const dropArea = document.getElementById("drop-area");
@@ -371,27 +355,15 @@ function isScrollSnapEnabled(container) {
 function ensureSnap(container) {
   setTimeout(() => {
     // Snap-Positionen für horizontal und vertikal berechnen
-    const snapPositionsX = Array.from(container.children).map(
-      (child) => child.offsetLeft
-    );
-    const snapPositionsY = Array.from(container.children).map(
-      (child) => child.offsetTop
-    );
+    const snapPositionsX = Array.from(container.children).map((child) => child.offsetLeft);
+    const snapPositionsY = Array.from(container.children).map((child) => child.offsetTop);
 
     const currentScrollX = container.scrollLeft;
     const currentScrollY = container.scrollTop;
 
     // Nächste Snap-Position für beide Richtungen finden
-    const closestSnapX = snapPositionsX.reduce((prev, curr) =>
-      Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX)
-        ? curr
-        : prev
-    );
-    const closestSnapY = snapPositionsY.reduce((prev, curr) =>
-      Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY)
-        ? curr
-        : prev
-    );
+    const closestSnapX = snapPositionsX.reduce((prev, curr) => (Math.abs(curr - currentScrollX) < Math.abs(prev - currentScrollX) ? curr : prev));
+    const closestSnapY = snapPositionsY.reduce((prev, curr) => (Math.abs(curr - currentScrollY) < Math.abs(prev - currentScrollY) ? curr : prev));
 
     // Scrolle sanft zur nächsten Snap-Position
     container.scrollTo({
@@ -424,17 +396,11 @@ async function getUser() {
     profil_container.classList.add("none");
     profil_login.classList.remove("none");
   } else {
-    document.getElementById("username").innerText =
-      profil.data.profile.affectedRows.username;
-    document.getElementById("userPosts").innerText =
-      profil.data.profile.affectedRows.amountposts;
-    document.getElementById("followers").innerText =
-      profil.data.profile.affectedRows.amountfollower;
-    document.getElementById("following").innerText =
-      profil.data.profile.affectedRows.amountfollowed;
-    document.getElementById("profilbild").src = tempMedia(
-      profil.data.profile.affectedRows.img.replace("media/", "")
-    );
+    document.getElementById("username").innerText = profil.data.profile.affectedRows.username;
+    document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
+    document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
+    document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
+    document.getElementById("profilbild").src = tempMedia(profil.data.profile.affectedRows.img.replace("media/", ""));
   }
   return profil;
 }
@@ -590,10 +556,7 @@ async function postsLaden() {
               e.classList.add("fill-red");
 
               // Prüfen, ob das <span> "K" oder "M" enthält
-              if (
-                e.nextElementSibling.textContent.includes("K") ||
-                e.nextElementSibling.textContent.includes("M")
-              ) {
+              if (e.nextElementSibling.textContent.includes("K") || e.nextElementSibling.textContent.includes("M")) {
                 return; // Wenn ja, wird das Hochzählen übersprungen
               } else {
                 let currentCount = parseInt(e.nextElementSibling.textContent);
@@ -663,11 +626,28 @@ function togglePopup(popup) {
   overlay.classList.toggle("none");
   const cc = document.getElementById(popup);
   cc.classList.toggle("none");
-}
-function postClicked(objekt) {
-  togglePopup("cardClicked");
+
+  // Überprüfen, ob ein <audio>-Element vorhanden ist
+  const audioElement = overlay.querySelector("audio");
+
+  if (audioElement) {
+    // Wenn ein Audio-Element gefunden wurde, die Wiedergabe pausieren
+    audioElement.pause();
+    console.log("Audio pausiert");
+  } else {
+    console.log("Kein Audio-Element gefunden");
+  }
+  if (audioplayer) {
+    audioplayer.pause();
+    audioplayer = null;
+  }
   const imageContainer = document.getElementById("comment-img-container");
   imageContainer.innerHTML = "";
+}
+async function postClicked(objekt) {
+  togglePopup("cardClicked");
+  const imageContainer = document.getElementById("comment-img-container");
+  // imageContainer.innerHTML = "";
 
   if (objekt.contenttype === "audio") {
     const audio = document.createElement("audio");
@@ -692,9 +672,11 @@ function postClicked(objekt) {
     // 4. Füge die Kinder-Elemente (Canvas und Button) in das <div> ein
     audioContainer.appendChild(canvas);
     audioContainer.appendChild(button);
-    audioContainer.appendChild(audio);
+    // audioContainer.appendChild(audio);
     // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
     imageContainer.appendChild(audioContainer);
+
+    initAudioplayer("waveform-preview", audio.src);
   } else {
     const parts = objekt.media.split(",");
     let trimmedPart;
@@ -702,6 +684,7 @@ function postClicked(objekt) {
 
     imageContainer.classList.add("comment-img");
     if (parts.length > 1) imageContainer.classList.add("multi");
+    else imageContainer.classList.remove("multi");
     for (const part of parts) {
       trimmedPart = part.trim();
       img = document.createElement("img");
@@ -737,9 +720,7 @@ function postClicked(objekt) {
       // Benutzerbild <img src="userImage" alt="user image">
       const img = document.createElement("img");
 
-      img.src = c.user.img
-        ? tempMedia(c.user.img.replace("media/", ""))
-        : "svg/noname.svg";
+      img.src = c.user.img ? tempMedia(c.user.img.replace("media/", "")) : "svg/noname.svg";
       img.alt = "user image";
 
       // Benutzername <span>userName</span>
@@ -751,9 +732,7 @@ function postClicked(objekt) {
       const commentParagraph = document.createElement("p");
       commentParagraph.textContent = c.content;
 
-      const existingEntry = mostliked.find(
-        (entry) => entry.key === c.commentid
-      );
+      const existingEntry = mostliked.find((entry) => entry.key === c.commentid);
 
       if (existingEntry) {
         // Wenn der Eintrag existiert, erhöhe den liked-Wert
@@ -792,10 +771,7 @@ function postClicked(objekt) {
             e.classList.add("fill-red");
 
             // Prüfen, ob das <span> "K" oder "M" enthält
-            if (
-              e.nextElementSibling.textContent.includes("K") ||
-              e.nextElementSibling.textContent.includes("M")
-            ) {
+            if (e.nextElementSibling.textContent.includes("K") || e.nextElementSibling.textContent.includes("M")) {
               return; // Wenn ja, wird das Hochzählen übersprungen
             } else {
               let currentCount = parseInt(e.nextElementSibling.textContent);
@@ -843,15 +819,11 @@ function postClicked(objekt) {
   for (let i = 0; i < 3 && i < mostliked.length; i++) {
     const img = document.createElement("img");
 
-    img.src = mostliked[i].img
-      ? tempMedia(mostliked[i].img.replace("media/", ""))
-      : "svg/noname.svg";
+    img.src = mostliked[i].img ? tempMedia(mostliked[i].img.replace("media/", "")) : "svg/noname.svg";
     mostlikedcontainer.appendChild(img);
   }
   const topcommenter = document.createElement("span");
-  topcommenter.textContent = mostliked.length
-    ? mostliked[0].name + " and " + objekt.amountlikes + " others liked"
-    : "no one liked";
+  topcommenter.textContent = mostliked.length ? mostliked[0].name + " and " + objekt.amountlikes + " others liked" : "no one liked";
   mostlikedcontainer.appendChild(topcommenter);
 }
 function timeAgo(datetime) {
@@ -867,10 +839,8 @@ function timeAgo(datetime) {
   const months = Math.floor(days / 30); // Durchschnittlicher Monat mit 30 Tagen
   const years = Math.floor(days / 365); // Durchschnittliches Jahr mit 365 Tagen
 
-  if (seconds < 60)
-    return `${seconds} second` + (seconds > 1 ? "s ago" : " ago");
-  if (minutes < 60)
-    return `${minutes} minute` + (minutes > 1 ? "s ago" : " ago");
+  if (seconds < 60) return `${seconds} second` + (seconds > 1 ? "s ago" : " ago");
+  if (minutes < 60) return `${minutes} minute` + (minutes > 1 ? "s ago" : " ago");
   if (hours < 24) return `${hours} hour` + (hours > 1 ? "s ago" : " ago");
   if (days < 7) return `${days} day` + (days > 1 ? "s ago" : " ago");
   if (weeks < 4) return `${weeks} week` + (weeks > 1 ? "s ago" : " ago");
@@ -1036,8 +1006,10 @@ async function processFiles(files, id) {
     previewItem.className = "preview-item";
     const type = file.type.substring(0, 5);
     if (type === "audio") {
+      previewItem.classList.add("audio-item");
       previewItem.innerHTML = `
       <p>${file.name}</p><canvas id="${file.name}"></canvas>
+      <button id="play-pause">Play</button>
       <audio class="image-wrapper custom-audio none" alt="Vorschau" controls=""></audio>
       <img src="svg/logo_farbe.svg" class="loading" alt="loading">
       <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
@@ -1050,20 +1022,19 @@ async function processFiles(files, id) {
     }
 
     previewContainer.appendChild(previewItem);
-    const progressBar = previewItem.querySelector("progress");
     let element;
     if (type === "image") {
       element = previewItem.querySelector("img");
     } else if (type === "audio") {
       element = previewItem.querySelector("audio");
     }
-    const base64 = await convertImageToBase64(file, progressBar);
+    const base64 = await convertImageToBase64(file);
     element.src = base64;
     // imageElement.style.display = "block";
     element.classList.remove("none");
     element.nextElementSibling.remove();
     element.nextElementSibling.classList.remove("none");
-    initAudioplayer(file.name,base64);
+    initAudioplayer(file.name, base64);
   });
   document.querySelectorAll(".deletePost").forEach(addDeleteListener);
 }
@@ -1084,14 +1055,13 @@ function handleDelete(event) {
   // document.getElementById("file-input").value = ""; // Datei-Auswahl zurücksetzen
 }
 
-async function convertImageToBase64(file, progressBar) {
+async function convertImageToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     const type = file.type.substring(0, 5);
     if (type === "audio") {
       reader.onload = () => resolve(reader.result);
-      reader.onerror = () =>
-        reject(new Error("Failed to read file as Base64."));
+      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
     } else if (type === "image") {
       const img = new Image();
       reader.onload = () => {
@@ -1132,9 +1102,7 @@ function restoreFilterSettings() {
   let filterSettings = JSON.parse(localStorage.getItem("filterSettings")); // Aus localStorage laden
 
   if (filterSettings) {
-    let checkboxes = document.querySelectorAll(
-      '#filter input[type="checkbox"]'
-    );
+    let checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
 
     checkboxes.forEach((checkbox) => {
       if (filterSettings[checkbox.name] !== undefined) {
@@ -1207,14 +1175,10 @@ function connectImagesWithGradient(container, img1, img2) {
   const containerRect = containerEl.getBoundingClientRect();
 
   // Koordinaten relativ zum Container berechnen
-  const x1 =
-    rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
-  const y1 =
-    rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
-  const x2 =
-    rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
-  const y2 =
-    rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
+  const x1 = rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
+  const y1 = rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
+  const x2 = rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
+  const y2 = rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
 
   // Kontrollpunkt für den Bogen berechnen (Mitte zwischen Punkten, leicht nach oben versetzt)
   const controlX = (x1 + x2) / 2;
