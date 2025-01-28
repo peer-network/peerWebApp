@@ -17,9 +17,9 @@ Header set Access-Control-Max-Age "600"
 # <FilesMatch "\.(js)$">
 Header set Access-Control-Allow-Origin "*"
 # </FilesMatch>
-        # SetEnvIf Origin "http(s)?://(www\.)?(getpeer.eu/graphql)$" AccessControlAllowOrigin=$0
-        # Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
-        # Header merge Vary Origin
+# SetEnvIf Origin "http(s)?://(www\.)?(getpeer.eu/graphql)$" AccessControlAllowOrigin=$0
+# Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+# Header merge Vary Origin
 Header always set Permissions-Policy "camera=(self), geolocation=(self), microphone=(self), fullscreen=(self), autoplay=(self)"
 Header always set Referrer-Policy "no-referrer"
 Header always edit Set-Cookie (.*) "$1; SameSite=strict"

@@ -317,8 +317,6 @@ h1 {
     display: block !important;
     overflow: scroll;
   }
-  .cImg {
-  }
 
   .comments {
     width: 97% !important;
@@ -389,9 +387,6 @@ h1 {
 
 .filterButton img {
   height: 1.2rem;
-}
-
-.filterGroup {
 }
 
 .filterGroup label img {
@@ -768,6 +763,8 @@ h1 {
 }
 
 .shadow {
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
   box-shadow: inset 0px -24rem 7rem -17rem hsla(0, 0%, 0%, 0.5), inset 0 0 2rem #000;
@@ -841,9 +838,15 @@ h1 {
   padding: 1rem;
   left: 0;
   color: var(--white);
+  z-index: 2;
   /* margin-bottom: 5rem; */
   /* bottom: 3rem; */
 }
+
+/* [content="video"] .post-inhalt {
+  top: 5%;
+  z-index: 2;
+} */
 
 .fill-red use {
   fill: red !important;
@@ -938,9 +941,6 @@ h1 {
 .likeComment svg {
   height: 1.7rem;
   width: 1.7rem;
-}
-
-.commentDate {
 }
 
 #overlay {
@@ -1119,6 +1119,7 @@ h1 {
 }
 
 .btClose {
+  z-index: 2;
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -1154,6 +1155,7 @@ h1 {
 }
 
 .deletePost {
+  z-index: 5;
   top: -1rem;
   right: -1rem;
 }
@@ -1202,7 +1204,8 @@ h1 {
   padding: 1.5rem;
 }
 #createPostImage,
-#createPostAudio {
+#createPostAudio,
+#createPostVideo {
   position: absolute;
   right: 4rem;
   bottom: 4rem;
@@ -1287,6 +1290,7 @@ h1 {
   height: 8rem;
 }
 .preview-item p {
+  z-index: 2;
   margin-bottom: 1rem;
 }
 
@@ -1419,4 +1423,17 @@ h1 {
 .custom-audio:hover {
   background-color: #e0e0e0;
   border-color: #0056b3;
+}
+.create-video,
+.custom-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 85%;
+  object-fit: contain; /* Behält das Seitenverhältnis bei */
+}
+.custom-video {
+  margin-top: 1rem;
 }

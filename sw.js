@@ -68,10 +68,10 @@ self.addEventListener("fetch", (event) => {
     );
     return;
   }
-  if (event.request.url.endsWith(".mp3")) {
-    event.respondWith(fetchAndProcessAudio(event.request));
-    return;
-  }
+  // if (event.request.url.endsWith(".mp3")) {
+  //   event.respondWith(fetchAndProcessAudio(event.request));
+  //   return;
+  // }
   // Cache-First für alle anderen Dateien
   event.respondWith(
     caches.match(request).then((cachedResponse) => {

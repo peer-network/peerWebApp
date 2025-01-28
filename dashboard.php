@@ -324,7 +324,7 @@ include 'phpheader.php';
                         <p>.png, .jpg, .jpeg, .gif, .webp</p>
                     </div>
 
-                    <input type="file" id="file-input-image" accept="image/*" hidden multiple />
+                    <input type="file" id="file-input-image" accept=".png, .jpg, .jpeg, .gif, .webp" hidden multiple />
                 </div>
                 <p>The maximum file size is 25MB</p>
 
@@ -349,7 +349,7 @@ include 'phpheader.php';
                         <p>.mp3, .wav, .flac, .aac</p>
                     </div>
 
-                    <input type="file" id="file-input-audio" accept="Audio/*" hidden />
+                    <input type="file" id="file-input-audio" accept=".mp3, .wav, .flac, .aac" hidden />
                 </div>
                 <p>The maximum file size is 200MB</p>
 
@@ -374,7 +374,7 @@ include 'phpheader.php';
                         <p>.mp4, .avi, .mov, .webm</p>
                     </div>
 
-                    <input type="file" id="file-input-video" accept="Video/*" hidden />
+                    <input type="file" id="file-input-video" accept=".mp4, .avi, .mov, .webm" hidden />
                 </div>
                 <p>The maximum file size is 3GB</p>
 
@@ -383,6 +383,7 @@ include 'phpheader.php';
                 <!-- <label for="bildbeschreibung">Beschreibung:</label> -->
                 <textarea id="descriptionVideo" rows="4" placeholder="Write a caption" name="text-input" maxlength="200" required></textarea>
                 <div id="preview-video" class="blockscroll preview-container"></div>
+                <button class="button" id="createPostVideo">Upload</button>
             </form>
             <div class="addTags">
                 <h4># Add tags</h4>

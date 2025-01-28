@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleImage").value;
     const beschreibung = document.getElementById("descriptionImage").value;
-    const imageWrappers = document.querySelectorAll(".image-wrapper");
+    const imageWrappers = document.querySelectorAll(".create-img");
 
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault(); // Prevent form reload
     const title = document.getElementById("titleAudio").value;
     const beschreibung = document.getElementById("descriptionImage").value;
-    const imageWrappers = document.querySelectorAll(".image-wrapper");
+    const imageWrappers = document.querySelectorAll(".create-audio");
 
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
@@ -136,6 +136,28 @@ document.addEventListener("DOMContentLoaded", () => {
         media: combinedHTML,
         mediadescription: beschreibung,
         contenttype: "audio",
+      })
+    ) {
+      togglePopup("addPost");
+
+      location.reload();
+    }
+  });
+  document.getElementById("createPostVideo").addEventListener("click", async function createPost(event) {
+    event.preventDefault(); // Prevent form reload
+    const title = document.getElementById("titleVideo").value;
+    const beschreibung = document.getElementById("descriptionVideo").value;
+    const imageWrappers = document.querySelectorAll(".create-video");
+
+    const combinedHTML = Array.from(imageWrappers)
+      .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
+      .join(" "); // Concatenate the HTML content with a space in between
+    if (
+      await sendCreatePost({
+        title: title,
+        media: combinedHTML,
+        mediadescription: beschreibung,
+        contenttype: "video",
       })
     ) {
       togglePopup("addPost");
@@ -451,7 +473,7 @@ async function postsLaden() {
 
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
-
+  let audio, video;
   // Array von JSON-Objekten durchlaufen und für jedes Objekt einen Container erstellen
   posts.data.getallposts.affectedRows.forEach((objekt) => {
     // Haupt-<section> erstellen
@@ -496,7 +518,16 @@ async function postsLaden() {
       audio.src = tempMedia(objekt.media);
       audio.controls = true;
       audio.className = "custom-audio";
+      addMediaListener(audio);
       postDiv.appendChild(audio);
+    } else if (objekt.contenttype === "video") {
+      video = document.createElement("video");
+      video.id = objekt.media;
+      video.src = tempMedia(objekt.media);
+      video.controls = true;
+      video.className = "custom-video";
+      addMediaListener(video);
+      postDiv.appendChild(video);
     }
 
     const shadowDiv = document.createElement("div");
@@ -622,28 +653,21 @@ async function postsLaden() {
   // console.log("title:", objekt.title);
 }
 function togglePopup(popup) {
+  const mediaElements = document.querySelectorAll("video, audio");
+  mediaElements.forEach((media) => media.pause());
+  if (audioplayer) {
+    audioplayer.pause();
+    audioplayer = null;
+  }
   const overlay = document.getElementById("overlay");
   overlay.classList.toggle("none");
   const cc = document.getElementById(popup);
   cc.classList.toggle("none");
 
-  // Überprüfen, ob ein <audio>-Element vorhanden ist
-  const audioElement = overlay.querySelector("audio");
-
-  if (audioElement) {
-    // Wenn ein Audio-Element gefunden wurde, die Wiedergabe pausieren
-    audioElement.pause();
-    console.log("Audio pausiert");
-  } else {
-    console.log("Kein Audio-Element gefunden");
-  }
-  if (audioplayer) {
-    audioplayer.pause();
-    audioplayer = null;
-  }
   const imageContainer = document.getElementById("comment-img-container");
   imageContainer.innerHTML = "";
 }
+
 async function postClicked(objekt) {
   togglePopup("cardClicked");
   const imageContainer = document.getElementById("comment-img-container");
@@ -677,6 +701,24 @@ async function postClicked(objekt) {
     imageContainer.appendChild(audioContainer);
 
     initAudioplayer("waveform-preview", audio.src);
+  } else if (objekt.contenttype === "video") {
+    const video = document.createElement("video");
+    video.id = "video2";
+    video.src = tempMedia(objekt.media);
+    video.controls = true;
+    video.className = "custom-video";
+    video.autoplay = true; // Autoplay aktivieren
+    video.muted = false; // Stummschaltung aktivieren (wichtig für Autoplay)
+    video.loop = true; // Video in Endlosschleife abspielen
+
+    // 1. Erzeuge das <div>-Element
+    const videoContainer = document.createElement("div");
+    videoContainer.appendChild(video);
+    videoContainer.id = "video-container"; // Setze die ID
+
+    // videoContainer.appendChild(video);
+    // 5. Füge das <div> in das Dokument ein (z.B. ans Ende des Body)
+    imageContainer.appendChild(videoContainer);
   } else {
     const parts = objekt.media.split(",");
     let trimmedPart;
@@ -1010,13 +1052,20 @@ async function processFiles(files, id) {
       previewItem.innerHTML = `
       <p>${file.name}</p><canvas id="${file.name}"></canvas>
       <button id="play-pause">Play</button>
-      <audio class="image-wrapper custom-audio none" alt="Vorschau" controls=""></audio>
+      <audio class="image-wrapper create-audio none" alt="Vorschau" controls=""></audio>
       <img src="svg/logo_farbe.svg" class="loading" alt="loading">
       <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
     } else if (type === "image") {
       previewItem.innerHTML = `
       <p>${file.name}</p>
-      <img class="image-wrapper none" alt="Vorschau" />
+      <img class="image-wrapper create-img none" alt="Vorschau" />
+      <img src="svg/logo_farbe.svg" class="loading" alt="loading">
+      <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
+    } else if (type === "video") {
+      previewItem.classList.add("video-item");
+      previewItem.innerHTML = `
+      <p>${file.name}</p>
+      <video id="${file.name}" class="image-wrapper create-video none" alt="Vorschau" controls=""></video>
       <img src="svg/logo_farbe.svg" class="loading" alt="loading">
       <img src="svg/plus2.svg" class="none btClose deletePost" alt="delete">`;
     }
@@ -1027,6 +1076,8 @@ async function processFiles(files, id) {
       element = previewItem.querySelector("img");
     } else if (type === "audio") {
       element = previewItem.querySelector("audio");
+    } else if (type === "video") {
+      element = previewItem.querySelector("video");
     }
     const base64 = await convertImageToBase64(file);
     element.src = base64;
@@ -1034,10 +1085,30 @@ async function processFiles(files, id) {
     element.classList.remove("none");
     element.nextElementSibling.remove();
     element.nextElementSibling.classList.remove("none");
-    initAudioplayer(file.name, base64);
+    if (type === "audio") {
+      initAudioplayer(file.name, base64);
+    } else if (type === "video") {
+      element.autoplay = true;
+      element.loop = true;
+      element.muted = true; // Optional: Video ohne Ton abspielen
+    }
   });
   document.querySelectorAll(".deletePost").forEach(addDeleteListener);
 }
+function addMediaListener(mediaElement) {
+  if (!mediaElement) return; // Sicherheitshalber prüfen, ob das Element existiert
+
+  mediaElement.addEventListener("play", () => {
+    // Selektiere alle vorhandenen Medienelemente auf der Seite
+    const allMediaElements = document.querySelectorAll("audio, video");
+    allMediaElements.forEach((otherMedia) => {
+      if (otherMedia !== mediaElement && !otherMedia.paused) {
+        otherMedia.pause();
+      }
+    });
+  });
+}
+
 // Funktion, die dem Element den Event-Listener hinzufügt
 function addDeleteListener(element) {
   // Entfernt eventuelle alte Event-Listener, indem eine benannte Funktion verwendet wird
@@ -1060,6 +1131,9 @@ async function convertImageToBase64(file) {
     const reader = new FileReader();
     const type = file.type.substring(0, 5);
     if (type === "audio") {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Failed to read file as Base64."));
+    } else if (type === "video") {
       reader.onload = () => resolve(reader.result);
       reader.onerror = () => reject(new Error("Failed to read file as Base64."));
     } else if (type === "image") {
