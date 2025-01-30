@@ -33,47 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // const scrollContainer = document.getElementById("comments");
-  // scrollContainer.addEventListener(
-  //   "wheel",
-  //   (event) => {
-  //     // Prüfen, ob das Scrollen am oberen oder unteren Rand des inneren Containers angekommen ist
-  //     const atTop = scrollContainer.scrollTop === 0;
-  //     const atBottom =
-  //       scrollContainer.scrollTop + scrollContainer.clientHeight + 1 >=
-  //       scrollContainer.scrollHeight;
-
-  //     // Wenn das innere Element am oberen Rand ist und nach oben gescrollt wird, oder am unteren Rand und nach unten gescrollt wird
-  //     if ((atTop && event.deltaY < 0) || (atBottom && event.deltaY > 0)) {
-  //       // Verhindern, dass das Event weitergegeben wird
-  //       event.preventDefault();
-  //     }
-  //     event.stopPropagation();
-  //   },
-  //   { capture: false, passive: false }
-  // );
-  addScrollBlocker(document.getElementById("preview-image"));
-  addScrollBlocker(document.getElementById("preview-audio"));
-  addScrollBlocker(document.getElementById("comment-img-container"));
-  addScrollBlocker(document.getElementById("comments-container"));
-  addScrollBlocker(document.getElementById("cardClicked"));
-  addScrollBlocker(document.getElementById("overlay"));
-
   const imgContainer = document.getElementById("comment-img-container");
-
-  // imgContainer.addEventListener(
-  //   "wheel",
-  //   (event) => {
-  //     event.preventDefault();
-  //     event.stopPropagation();
-
-  //     imgContainer.scrollBy({
-  //       left: event.deltaY, // Scroll horizontal entsprechend des Mausrads
-  //       behavior: "smooth", // Sanftes Scrollen
-  //     });
-  //   },
-  //   { capture: true, passive: false }
-  // );
 
   const footer = document.getElementById("footer");
   // Funktion erstellen, die aufgerufen wird, wenn der Footer in den Viewport kommt
@@ -184,31 +144,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-  window.addEventListener("resize", () => {
-    if (window.innerWidth >= 768) {
-      header.style.top = "0"; // Stelle sicher, dass der Header sichtbar bleibt
-    }
-  });
+  // window.addEventListener("resize", () => {
+  //   if (window.innerWidth >= 768) {
+  //     header.style.top = "0"; // Stelle sicher, dass der Header sichtbar bleibt
+  //   }
+  // });
 
-  // const container = document.getElementById("main");
+  const main = document;
   let lastScrollPosition = 0;
   // let offset=0;
-  window.addEventListener("scroll", () => {
-    const currentScrollTop = window.scrollY;
+  main.addEventListener("scroll", (e) => {
+    e = e;
+    const currentScrollTop = main.scrollingElement.scrollTopMax;
     if (window.innerWidth < 9999) {
       if (currentScrollTop > lastScrollPosition) {
         // Runterscrollen: Header verschwindet
         // offset = Math.max( offset - (currentScrollTop - lastScrollPosition),-80);
         // header.style.top = `${offset}px`;
         header.classList.add("none");
-      } else {
+      } else if (currentScrollTop < lastScrollPosition) {
         // Hochscrollen: Header erscheint wieder
         // offset = Math.min( offset - (currentScrollTop - lastScrollPosition),-0);
         // header.style.top = `${offset}px`;
         header.classList.remove("none");
       }
     }
-
     // Aktuelle Scroll-Position speichern
     lastScrollPosition = currentScrollTop;
   });
@@ -331,33 +291,40 @@ async function addScrollBlocker(element) {
     },
     { passive: false }
   );
-
+  let stopscroll = false;
   function handleScroll(event, inputType, el) {
     //   const scrollableContainer = event.target.closest(".blockscroll");
     //   if (!scrollableContainer) return; // Nur in bestimmten Containern scrollen
-
-    event.preventDefault(); // Standard-Scrollverhalten blockieren
+    if (event.currentTarget.className === "scrollable") stopscroll = true;
+    event.stopPropagation();
+    if (event.currentTarget.id === "main" && stopscroll) {
+      event.preventDefault();
+    }
+    if (event.currentTarget.className === "scrollable") return;
+    // event.preventDefault(); // Standard-Scrollverhalten blockieren
+    // event.stopPropagation();
 
     // Bewegung erfassen
-    let deltaX = 0,
-      deltaY = 0,
-      tempo = 1;
-    if (inputType === "mouse") {
-      deltaX = event.deltaX * tempo;
-      deltaY = event.deltaY * tempo;
-      el.scrollLeft += deltaX - deltaY;
-      el.scrollTop += deltaY;
-    } else if (inputType === "touch") {
-      const touch = event.touches[0];
-      deltaX = lastTouchX ? touch.clientX - lastTouchX : 0;
-      deltaY = lastTouchY ? touch.clientY - lastTouchY : 0;
+    // let deltaX = 0,
+    //   deltaY = 0,
+    //   tempo = 1;
+    // if (inputType === "mouse") {
+    //   deltaX = event.deltaX * tempo;
+    //   deltaY = event.deltaY * tempo;
+    //   el.scrollLeft += deltaX - deltaY;
+    //   el.scrollTop += deltaY;
+    // } else if (inputType === "touch") {
+    //   const touch = event.touches[0];
+    //   deltaX = lastTouchX ? touch.clientX - lastTouchX : 0;
+    //   deltaY = lastTouchY ? touch.clientY - lastTouchY : 0;
 
-      // Speichere die aktuelle Touch-Position
-      lastTouchX = touch.clientX;
-      lastTouchY = touch.clientY;
-      el.scrollLeft -= deltaX;
-      el.scrollTop -= deltaY;
-    }
+    //   // Speichere die aktuelle Touch-Position
+    //   lastTouchX = touch.clientX;
+    //   lastTouchY = touch.clientY;
+    //   el.scrollLeft -= deltaX;
+    //   el.scrollTop -= deltaY;
+    // }
+
     // el.scrollBy({
     //   left: deltaX,
     //   top: deltaY,
@@ -426,6 +393,7 @@ async function getUser() {
   }
   return profil;
 }
+
 function appendPost(json) {
   const parentElement = document.getElementById("parent-id"); // Das übergeordnete Element
   const letztesDiv = parentElement.lastElementChild;
@@ -509,7 +477,6 @@ async function postsLaden() {
 
         img.src = tempMedia(trimmedPart);
         img.alt = "";
-
         postDiv.appendChild(img);
       }
     } else if (objekt.contenttype === "audio") {
@@ -659,6 +626,7 @@ function togglePopup(popup) {
     audioplayer.pause();
     audioplayer = null;
   }
+  document.body.classList.toggle("noscroll");
   const overlay = document.getElementById("overlay");
   overlay.classList.toggle("none");
   const cc = document.getElementById(popup);
@@ -669,6 +637,7 @@ function togglePopup(popup) {
 }
 
 async function postClicked(objekt) {
+  // document.querySelector("#main").classList.add("noscroll");
   togglePopup("cardClicked");
   const imageContainer = document.getElementById("comment-img-container");
   // imageContainer.innerHTML = "";

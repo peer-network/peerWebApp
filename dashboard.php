@@ -13,6 +13,7 @@ include 'phpheader.php';
     <script src="js/lib.min.js?" defer></script>
     <script src="js/dashboard.js" defer></script>
     <script src="js/audio.js" async></script>
+    <script src="js/posts.js" async></script>
 
 
     <?php
@@ -229,8 +230,8 @@ include 'phpheader.php';
             <img src="svg/logo_farbe.svg" alt="loading">
         </div>
     </article>
-    <div id="overlay" class="none ">
-        <div id="cardClicked" class="none">
+    <div id="overlay" class="none scrollable">
+        <div id="cardClicked" class="none scrollable">
             <div class="cImg">
                 <div id="comment-img-container">
                     <img id="comment-img" src="" alt="">
@@ -279,7 +280,7 @@ include 'phpheader.php';
 
 
 
-        <div id="addPost" class="none ">
+        <div id="addPost" class="none scrollable">
             <input id="createImage" type="radio" name="postArt" value="image/*" checked>
             <input id="createNotes" type="radio" name="postArt" value=".txt">
             <input id="createAudio" type="radio" name="postArt" value="audio/*">

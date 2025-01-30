@@ -77,9 +77,16 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--background-color);
+  scroll-behavior: smooth;
+
   /* font-size: clamp(12px, 3vmax, 1.6rem); */
 }
-
+header {
+  position: fixed;
+  left: 13rem;
+  width: calc(100vw - 30rem);
+  z-index: 3;
+}
 h1 {
   display: inline;
 }
@@ -123,7 +130,7 @@ h1 {
 .profil {
   grid-area: profil;
   gap: 20px;
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type: y mandatory; */
   padding-top: 2rem;
 }
 
@@ -218,7 +225,7 @@ h1 {
   gap: 2rem 1rem;
   overflow: auto;
   margin-top: 0rem;
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type: y mandatory; */
   overflow-x: hidden;
   flex-wrap: wrap;
   justify-content: space-evenly;
@@ -286,7 +293,11 @@ h1 {
     height: auto !important;
     max-height: 90%;
   }
-
+  header {
+    position: relative;
+    left: 0;
+    width: 100%;
+  }
   .header {
     font-size: 0.5rem;
   }
@@ -822,7 +833,6 @@ h1 {
   display: inline-block;
   text-shadow: 0 0 2px var(--black);
 }
-
 .post-text {
   display: table-column;
   font-size: 0.8rem;
@@ -847,7 +857,6 @@ h1 {
   top: 5%;
   z-index: 2;
 } */
-
 .fill-red use {
   fill: red !important;
   stroke: red !important;
@@ -1010,7 +1019,7 @@ h1 {
   margin: auto;
   height: 50vh;
   max-height: 50vh;
-  /* scroll-snap-type: x mandatory; */
+  scroll-snap-type: x mandatory;
   align-items: center;
 }
 
@@ -1355,6 +1364,7 @@ h1 {
 #tagsContainer > p {
   margin-top: 5rem;
 }
+
 #tagsContainer > div div {
   padding: 0.3rem;
   border: 1px solid #fff;
@@ -1436,4 +1446,7 @@ h1 {
 }
 .custom-video {
   margin-top: 1rem;
+}
+.noscroll {
+  overflow: hidden;
 }
