@@ -27,7 +27,7 @@ async function likeComment(commentId) {
   };
 
   // 4. fetch aufrufen
-  fetch("https://getpeer.eu/graphql", requestOptions)
+  fetch("https://peer-network.eu/graphql", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log("error", error));
@@ -61,7 +61,7 @@ async function addComment(postid, content) {
   };
 
   // 4. fetch aufrufen
-  fetch("https://getpeer.eu/graphql", requestOptions)
+  fetch("https://peer-network.eu/graphql", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log("error", error));
@@ -74,7 +74,7 @@ function createComment(postid, content) {
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
-  const url = "https://getpeer.eu/graphql";
+  const url = "https://peer-network.eu/graphql";
   const mutation = `
         mutation CreateComment($input: CreateCommentInput!) {
             createComment(input: $input) {

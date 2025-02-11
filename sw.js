@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "peer-cache-v11";
+const CACHE_NAME = "peer-cache-v12";
 
 // Installations-Ereignis: Basis-Assets cachen
 self.addEventListener("install", (event) => {

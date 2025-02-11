@@ -53,10 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
   observer.observe(footer);
 
   document.getElementById("btAddPost").addEventListener("click", function startAddPost() {
+    header.classList.add("none");
     togglePopup("addPost");
   });
   const closeAddPost = document.getElementById("closeAddPost");
   closeAddPost.addEventListener("click", () => {
+    header.classList.remove("none");
     togglePopup("addPost");
   });
   document.getElementById("createPostImage").addEventListener("click", async function createPost(event) {
@@ -64,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("titleImage").value;
     const beschreibung = document.getElementById("descriptionImage").value;
     const imageWrappers = document.querySelectorAll(".create-img");
+    const tags = tag_getTagArray();
 
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
@@ -74,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         media: combinedHTML,
         mediadescription: beschreibung,
         contenttype: "image",
+        tags: tags,
       })
     ) {
       togglePopup("addPost");
@@ -86,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("titleAudio").value;
     const beschreibung = document.getElementById("descriptionImage").value;
     const imageWrappers = document.querySelectorAll(".create-audio");
+    const tags = tag_getTagArray();
 
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
@@ -96,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         media: combinedHTML,
         mediadescription: beschreibung,
         contenttype: "audio",
+        tags: tags,
       })
     ) {
       togglePopup("addPost");
@@ -108,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("titleVideo").value;
     const beschreibung = document.getElementById("descriptionVideo").value;
     const imageWrappers = document.querySelectorAll(".create-video");
+    const tags = tag_getTagArray();
 
     const combinedHTML = Array.from(imageWrappers)
       .map((wrapper) => wrapper.outerHTML.trim()) // Get the innerHTML of each element and trim whitespace
@@ -118,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         media: combinedHTML,
         mediadescription: beschreibung,
         contenttype: "video",
+        tags: tags,
       })
     ) {
       togglePopup("addPost");
@@ -130,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (event) => {
       saveFilterSettings();
-      const elements = document.querySelectorAll(`[content="${event.target.name}"]`);
+      const elements = document.querySelectorAll(`[content="${event.target.name.toLowerCase()}"]`);
       if (event.target.checked) {
         elements.forEach((element) => {
           element.classList.remove("none");
@@ -151,28 +159,48 @@ document.addEventListener("DOMContentLoaded", () => {
   // });
 
   const main = document;
-  let lastScrollPosition = 0;
-  // let offset=0;
-  main.addEventListener("scroll", (e) => {
-    e = e;
-    const currentScrollTop = main.scrollingElement.scrollTopMax;
-    if (window.innerWidth < 9999) {
-      if (currentScrollTop > lastScrollPosition) {
-        // Runterscrollen: Header verschwindet
-        // offset = Math.max( offset - (currentScrollTop - lastScrollPosition),-80);
-        // header.style.top = `${offset}px`;
-        header.classList.add("none");
-      } else if (currentScrollTop < lastScrollPosition) {
-        // Hochscrollen: Header erscheint wieder
-        // offset = Math.min( offset - (currentScrollTop - lastScrollPosition),-0);
-        // header.style.top = `${offset}px`;
-        header.classList.remove("none");
-      }
-    }
-    // Aktuelle Scroll-Position speichern
-    lastScrollPosition = currentScrollTop;
-  });
+  // let lastScrollPosition = 0;
+  // // let offset=0;
+  // main.addEventListener("scroll", (e) => {
+  //   e = e;
+  //   const currentScrollTop = main.scrollingElement.scrollTopMax;
+  //   if (window.innerWidth < 9999) {
+  //     if (currentScrollTop > lastScrollPosition) {
+  //       // Runterscrollen: Header verschwindet
+  //       // offset = Math.max( offset - (currentScrollTop - lastScrollPosition),-80);
+  //       // header.style.top = `${offset}px`;
+  //       header.classList.add("none");
+  //     } else if (currentScrollTop < lastScrollPosition) {
+  //       // Hochscrollen: Header erscheint wieder
+  //       // offset = Math.min( offset - (currentScrollTop - lastScrollPosition),-0);
+  //       // header.style.top = `${offset}px`;
+  //       header.classList.remove("none");
+  //     }
+  //   }
+  //   // Aktuelle Scroll-Position speichern
+  //   lastScrollPosition = currentScrollTop;
+  // });
+  let lastScrollTop = 0;
 
+  window.addEventListener(
+    "scroll",
+    function () {
+      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (currentScroll > lastScrollTop) {
+        // Runter gescrollt
+        header.classList.add("none");
+        // console.log("Runter gescrollt");
+      } else {
+        // Hoch gescrollt
+        header.classList.remove("none");
+        // console.log("Hoch gescrollt");
+      }
+
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Für negative Werte korrigieren
+    },
+    false
+  );
   // Liste der Dropzonen und Input-Elemente
   const zones = [
     {
@@ -389,7 +417,7 @@ async function getUser() {
     document.getElementById("userPosts").innerText = profil.data.profile.affectedRows.amountposts;
     document.getElementById("followers").innerText = profil.data.profile.affectedRows.amountfollower;
     document.getElementById("following").innerText = profil.data.profile.affectedRows.amountfollowed;
-    document.getElementById("profilbild").src = tempMedia(profil.data.profile.affectedRows.img.replace("media/", ""));
+    document.getElementById("profilbild").src = profil.data.profile.affectedRows.img ? tempMedia(profil.data.profile.affectedRows.img.replace("media/", "")) : "svg/noname.svg";
   }
   return profil;
 }
@@ -423,6 +451,7 @@ async function postsLaden() {
   // // JSON anzeigen (z. B. in der Konsole)
   // console.log(JSON.stringify(jsonResult));
   // Formular mit ID auswählen
+
   const form = document.querySelector("#filter");
 
   // Alle Checkboxen innerhalb des Formulars abrufen
@@ -432,12 +461,13 @@ async function postsLaden() {
   const values = Array.from(checkboxes).map((checkbox) => checkbox.name);
 
   // Werte als komma-getrennte Zeichenkette zusammenfügen
-  const result = values.join(" ");
+  // const result = values.join(" ");
 
   // Ergebnis ausgeben
-  console.log(result);
-
-  const posts = await getPosts(postsLaden.offset, 48, result);
+  console.log(values);
+  const cleanedArray = values.map((values) => values.replace(/^"|"$/g, ""));
+  const posts = await getPosts(postsLaden.offset, 48, cleanedArray);
+  console.log(cleanedArray);
 
   // Übergeordnetes Element, in das die Container eingefügt werden (z.B. ein div mit der ID "container")
   const parentElement = document.getElementById("main"); // Das übergeordnete Element
@@ -1130,7 +1160,200 @@ async function convertImageToBase64(file) {
     reader.readAsDataURL(file);
   });
 }
+async function fetchTags(searchStr) {
+  // if (failedSearches.has(searchStr)) {
+  //   return [];
+  // }
+  for (let failed of failedSearches) {
+    if (searchStr.includes(failed)) {
+      return [];
+    }
+  }
+  const accessToken = getCookie("authToken");
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  });
+  const query = `
+      query Tagsearch($searchstr: String!) {
+          tagsearch(tagname: $searchstr, limit: 10) {
+              status
+              counter
+              ResponseCode
+              affectedRows {
+                name
+            }
+          }
+      }
+  `;
 
+  const variables = { searchstr: searchStr };
+
+  try {
+    const response = await fetch("https://peer-network.eu/graphql", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ query, variables }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (result.errors) throw new Error(result.errors[0]);
+    if (!result.data.tagsearch.affectedRows.length) {
+      failedSearches.add(searchStr);
+    }
+    return result.data.tagsearch.affectedRows;
+  } catch (error) {
+    console.error("Error fetching tags:", error);
+    return [];
+  }
+}
+const failedSearches = new Set();
+const tagInput = document.getElementById("tag-input");
+const tagContainer = document.getElementById("tagsContainer");
+const dropdownMenu = document.getElementById("dropdownMenu");
+tagInput.addEventListener("input", async function () {
+  const searchStr = tagInput.value.trim();
+  if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+    if (searchStr.length < 3) {
+      dropdownMenu.innerHTML = "";
+      dropdownMenu.classList.add("none");
+      return;
+    }
+  } else {
+    info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    return;
+  }
+
+  const tags = await fetchTags(searchStr);
+  dropdownMenu.innerHTML = "";
+  const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+
+  tags.forEach((tag) => {
+    if (!existingTags.includes(tag.name + "X")) {
+      const option = document.createElement("div");
+      option.textContent = tag.name;
+      option.classList.add("dropdown-item");
+      option.addEventListener("click", () => {
+        tagInput.value = tag.name;
+        tag_addTag(tagInput.value.trim());
+        tagInput.value = "";
+        tagInput.focus();
+        dropdownMenu.classList.toggle("none");
+      });
+      dropdownMenu.appendChild(option);
+    }
+  });
+
+  dropdownMenu.classList.toggle("none", tags.length == 0);
+});
+
+tagInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter" && tagInput.value.trim() !== "") {
+    if (/^[a-zA-Z0-9]+$/.test(tagInput.value.trim())) {
+      tag_addTag(tagInput.value.trim());
+      tagInput.value = "";
+    } else {
+      info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+    }
+  }
+});
+
+window.addEventListener("click", function (event) {
+  if (!tagInput.contains(event.target) && !dropdownMenu.contains(event.target)) {
+    dropdownMenu.classList.remove("show");
+  }
+});
+////////////// Tag-System
+// const tag_input = document.getElementById("tag-input");
+// const tagContainer = document.getElementById("tagsContainer");
+// const tag_createButton = document.getElementById("tagCreate");
+
+// tag_input.addEventListener("keypress", function (event) {
+//   if (event.key === "Enter" && tag_input.value.trim() !== "") {
+//     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
+//       tag_addTag(tag_input.value.trim());
+//       tag_input.value = "";
+//     } else {
+//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//     }
+//   }
+// });
+// async function fetchTags(searchStr) {
+//   const query = `
+//       query Tagsearch($searchstr: String!) {
+//           tagsearch(tagname: $searchstr, limit: 20) {
+//               status
+//               counter
+//               ResponseCode
+//               affectedRows
+//           }
+//       }
+//   `;
+
+//   const variables = { searchstr: searchStr };
+
+//   try {
+//     const response = await fetch("YOUR_GRAPHQL_ENDPOINT", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ query, variables }),
+//     });
+
+//     const result = await response.json();
+//     return result.data.tagsearch;
+//   } catch (error) {
+//     console.error("Error fetching tags:", error);
+//     return [];
+//   }
+// }
+// tag_createButton.addEventListener("click", function () {
+//   if (tag_input.value.trim() !== "") {
+//     if (/^[a-zA-Z0-9]+$/.test(tag_input.value.trim())) {
+//       tag_addTag(tag_input.value.trim());
+//       tag_input.value = "";
+//     } else {
+//       info("Information", "Nur Buchstaben und Zahlen sind erlaubt.");
+//     }
+//   }
+// });
+
+function tag_addTag(tagText) {
+  if (tagContainer.children.length >= 10) {
+    info("Information", "Es dürfen maximal 10 Tags erstellt werden.");
+    return;
+  }
+  if (tagContainer.children.length >= 1) {
+    const existingTags = Array.from(tagContainer.children).map((tag) => tag.textContent);
+
+    if (existingTags.includes(tagText + "X")) {
+      info("Information", "Tag existiert bereits.");
+      return;
+    }
+  }
+  const tag = document.createElement("span");
+  tag.classList.add("tag");
+  tag.textContent = tagText;
+
+  const tag_removeBtn = document.createElement("button");
+  tag_removeBtn.textContent = "X";
+  tag_removeBtn.classList.add("remove-tag");
+  tag_removeBtn.addEventListener("click", function () {
+    tagContainer.removeChild(tag);
+  });
+
+  tag.appendChild(tag_removeBtn);
+  tagContainer.appendChild(tag);
+}
+
+function tag_removeAllTags() {
+  tagContainer.innerHTML = "";
+}
+function tag_getTagArray() {
+  return Array.from(tagContainer.children).map((tag) => tag.textContent.slice(0, -1));
+}
 function saveFilterSettings() {
   let filterSettings = {};
   let checkboxes = document.querySelectorAll('#filter input[type="checkbox"]');
@@ -1154,82 +1377,82 @@ function restoreFilterSettings() {
     });
   }
 }
-function connectImagesWithGradient(container, img1, img2) {
-  // Container und Bilder auswählen
-  const containerEl = document.querySelector(container);
-  const img1El = document.querySelector(img1);
-  const img2El = document.querySelector(img2);
+// function connectImagesWithGradient(container, img1, img2) {
+//   // Container und Bilder auswählen
+//   const containerEl = document.querySelector(container);
+//   const img1El = document.querySelector(img1);
+//   const img2El = document.querySelector(img2);
 
-  // Sicherstellen, dass Elemente existieren
-  if (!containerEl || !img1El || !img2El) {
-    console.error("Eines der Elemente wurde nicht gefunden.");
-    return;
-  }
+//   // Sicherstellen, dass Elemente existieren
+//   if (!containerEl || !img1El || !img2El) {
+//     console.error("Eines der Elemente wurde nicht gefunden.");
+//     return;
+//   }
 
-  // Sicherstellen, dass der Container relativ positioniert ist
-  const computedStyle = getComputedStyle(containerEl);
-  if (computedStyle.position === "static") {
-    containerEl.style.position = "relative";
-  }
+//   // Sicherstellen, dass der Container relativ positioniert ist
+//   const computedStyle = getComputedStyle(containerEl);
+//   if (computedStyle.position === "static") {
+//     containerEl.style.position = "relative";
+//   }
 
-  // SVG erstellen
-  const svgNS = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(svgNS, "svg");
-  const defs = document.createElementNS(svgNS, "defs");
-  const gradient = document.createElementNS(svgNS, "linearGradient");
-  const path = document.createElementNS(svgNS, "path");
+//   // SVG erstellen
+//   const svgNS = "http://www.w3.org/2000/svg";
+//   const svg = document.createElementNS(svgNS, "svg");
+//   const defs = document.createElementNS(svgNS, "defs");
+//   const gradient = document.createElementNS(svgNS, "linearGradient");
+//   const path = document.createElementNS(svgNS, "path");
 
-  // Gradient definieren
-  gradient.setAttribute("id", "gradient");
-  gradient.setAttribute("x1", "0%");
-  gradient.setAttribute("y1", "0%");
-  gradient.setAttribute("x2", "100%");
-  gradient.setAttribute("y2", "0%");
+//   // Gradient definieren
+//   gradient.setAttribute("id", "gradient");
+//   gradient.setAttribute("x1", "0%");
+//   gradient.setAttribute("y1", "0%");
+//   gradient.setAttribute("x2", "100%");
+//   gradient.setAttribute("y2", "0%");
 
-  // Farbverlauf von Weiß zu Transparent
-  const stop1 = document.createElementNS(svgNS, "stop");
-  stop1.setAttribute("offset", "0%");
-  stop1.setAttribute("stop-color", "white");
-  stop1.setAttribute("stop-opacity", "1");
+//   // Farbverlauf von Weiß zu Transparent
+//   const stop1 = document.createElementNS(svgNS, "stop");
+//   stop1.setAttribute("offset", "0%");
+//   stop1.setAttribute("stop-color", "white");
+//   stop1.setAttribute("stop-opacity", "1");
 
-  const stop2 = document.createElementNS(svgNS, "stop");
-  stop2.setAttribute("offset", "100%");
-  stop2.setAttribute("stop-color", "white");
-  stop2.setAttribute("stop-opacity", "0");
+//   const stop2 = document.createElementNS(svgNS, "stop");
+//   stop2.setAttribute("offset", "100%");
+//   stop2.setAttribute("stop-color", "white");
+//   stop2.setAttribute("stop-opacity", "0");
 
-  gradient.appendChild(stop1);
-  gradient.appendChild(stop2);
-  defs.appendChild(gradient);
+//   gradient.appendChild(stop1);
+//   gradient.appendChild(stop2);
+//   defs.appendChild(gradient);
 
-  // SVG-Eigenschaften setzen
-  svg.style.position = "absolute";
-  svg.style.top = "0";
-  svg.style.left = "0";
-  svg.style.width = "100%";
-  svg.style.height = "100%";
-  svg.style.pointerEvents = "none"; // SVG nicht anklickbar machen
-  svg.appendChild(defs);
-  svg.appendChild(path);
-  containerEl.appendChild(svg);
+//   // SVG-Eigenschaften setzen
+//   svg.style.position = "absolute";
+//   svg.style.top = "0";
+//   svg.style.left = "0";
+//   svg.style.width = "100%";
+//   svg.style.height = "100%";
+//   svg.style.pointerEvents = "none"; // SVG nicht anklickbar machen
+//   svg.appendChild(defs);
+//   svg.appendChild(path);
+//   containerEl.appendChild(svg);
 
-  // Path für den Bogen setzen
-  const rect1 = img1El.getBoundingClientRect();
-  const rect2 = img2El.getBoundingClientRect();
-  const containerRect = containerEl.getBoundingClientRect();
+//   // Path für den Bogen setzen
+//   const rect1 = img1El.getBoundingClientRect();
+//   const rect2 = img2El.getBoundingClientRect();
+//   const containerRect = containerEl.getBoundingClientRect();
 
-  // Koordinaten relativ zum Container berechnen
-  const x1 = rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
-  const y1 = rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
-  const x2 = rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
-  const y2 = rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
+//   // Koordinaten relativ zum Container berechnen
+//   const x1 = rect1.x + rect1.width / 2 - containerRect.x + containerEl.scrollLeft;
+//   const y1 = rect1.y + rect1.height / 2 - containerRect.y + containerEl.scrollTop;
+//   const x2 = rect2.x + rect2.width / 2 - containerRect.x + containerEl.scrollLeft;
+//   const y2 = rect2.y + rect2.height / 2 - containerRect.y + containerEl.scrollTop;
 
-  // Kontrollpunkt für den Bogen berechnen (Mitte zwischen Punkten, leicht nach oben versetzt)
-  const controlX = (x1 + x2) / 2;
-  const controlY = Math.min(y1, y2) - 50;
+//   // Kontrollpunkt für den Bogen berechnen (Mitte zwischen Punkten, leicht nach oben versetzt)
+//   const controlX = (x1 + x2) / 2;
+//   const controlY = Math.min(y1, y2) - 50;
 
-  const d = `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2}`;
-  path.setAttribute("d", d);
-  path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "url(#gradient)");
-  path.setAttribute("stroke-width", 2);
-}
+//   const d = `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2}`;
+//   path.setAttribute("d", d);
+//   path.setAttribute("fill", "none");
+//   path.setAttribute("stroke", "url(#gradient)");
+//   path.setAttribute("stroke-width", 2);
+// }

@@ -10,10 +10,10 @@ async function getPosts(offset, limit, filter, title = "", tag = null) {
   var graphql = JSON.stringify({
     query: `query Getallposts {
     getallposts(
-      sortBy: "newest", 
+      sortBy: NEWEST, 
       postLimit: ${limit}, 
       postOffset: ${offset}, 
-      filterBy: "${filter}",        
+      filterBy: [${filter}],        
       title: "${title}",
       tag: ${tag}
     ) {
@@ -74,7 +74,7 @@ async function getPosts(offset, limit, filter, title = "", tag = null) {
     redirect: "follow",
   };
 
-  return fetch("https://getpeer.eu/graphql", requestOptions)
+  return fetch("https://peer-network.eu/graphql", requestOptions)
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
@@ -112,7 +112,7 @@ function likePost(postid) {
     redirect: "follow",
   };
 
-  return fetch("https://getpeer.eu/graphql", requestOptions)
+  return fetch("https://peer-network.eu/graphql", requestOptions)
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
@@ -154,7 +154,7 @@ async function dislikePost(postid) {
     redirect: "follow",
   };
 
-  fetch("https://getpeer.eu/graphql", requestOptions)
+  fetch("https://peer-network.eu/graphql", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log("error", error));
@@ -208,7 +208,7 @@ async function fetchPostData(postId) {
     });
 }
 async function sendCreatePost(variables) {
-  const url = "https://getpeer.eu/graphql"; // GraphQL-Endpunkt
+  const url = "https://peer-network.eu/graphql"; // GraphQL-Endpunkt
   const accessToken = getCookie("authToken");
 
   if (!accessToken) {
@@ -221,25 +221,20 @@ async function sendCreatePost(variables) {
   };
 
   const query = `
-    mutation CreatePost($title: String!, $media: String!, $mediadescription: String!, $contenttype: String!) {
+    mutation CreatePost($title: String!, $media: String!, $mediadescription: String!, $contenttype: String!, $tags: [String!]) {
       createPost(
+        action: POST
         input: {
           title: $title
           media: $media
           mediadescription: $mediadescription
           contenttype: $contenttype
+          tags: $tags
         }
       ) {
         status
         ResponseCode
-        affectedRows {
-          postid
-          userid
-          title
-          media
-          mediadescription
-          contenttype
-        }
+        affectedRows
       }
     }
   `;

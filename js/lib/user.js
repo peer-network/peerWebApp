@@ -7,13 +7,9 @@ async function fetchHelloData(userid = null) {
     Authorization: `Bearer ${accessToken}`,
   });
 
-  
   let graphql = JSON.stringify({
     query: `query Hello {
       hello {
-          root
-          args
-          context
           currentuserid
       }
       profile(userid: ${userid}) {
@@ -45,7 +41,7 @@ async function fetchHelloData(userid = null) {
   };
 
   try {
-    const response = await fetch("https://getpeer.eu/graphql", requestOptions);
+    const response = await fetch("https://peer-network.eu/graphql", requestOptions);
     const result_1 = await response.json();
     console.log(result_1);
     return result_1;
@@ -67,9 +63,6 @@ async function hello() {
   const graphql = JSON.stringify({
     query: `query Hello {
       hello {
-          root
-          args
-          context
           currentuserid
       }
   }`,
@@ -85,7 +78,7 @@ async function hello() {
 
   try {
     // Send the request and handle the response
-    const response = await fetch("https://getpeer.eu/graphql", requestOptions);
+    const response = await fetch("https://peer-network.eu/graphql", requestOptions);
     const result = await response.json();
 
     // Check for errors in response

@@ -1,5 +1,5 @@
 async function loginRequest(email, password) {
-  const url = "https://getpeer.eu/graphql";
+  const url = "https://peer-network.eu/graphql";
 
   // Create headers
   const headers = new Headers({
@@ -39,8 +39,7 @@ async function loginRequest(email, password) {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     if (result.errors) throw new Error(result.errors[0].message);
 
-    const { status, ResponseCode, accessToken, refreshToken } =
-      result.data.login;
+    const { status, ResponseCode, accessToken, refreshToken } = result.data.login;
 
     // Log status and error message for debugging; avoid logging sensitive tokens
     console.log("Status:", status);
@@ -62,39 +61,32 @@ async function loginRequest(email, password) {
   }
 }
 
+document.getElementById("registerForm").addEventListener("submit", async function (event) {
+  event.preventDefault(); // Prevent form reload
 
-document
-  .getElementById("registerForm")
-  .addEventListener("submit", async function (event) {
-    event.preventDefault(); // Prevent form reload
+  // Retrieve input values for email and password
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-    // Retrieve input values for email and password
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+  // Disable form and show loading indicator (optional UI improvement)
+  const submitButton = document.getElementById("submit");
+  submitButton.disabled = true;
 
-    // Disable form and show loading indicator (optional UI improvement)
-    const submitButton = document.getElementById("submit");
-    submitButton.disabled = true;
+  try {
+    // Attempt to register the user after passing validations
+    const result = await loginRequest(email, password);
 
-    try {
-      // Attempt to register the user after passing validations
-      const result = await loginRequest(email, password);
-
-      // Handle successful registration (e.g., redirect or display success message)
-      if (result.status === "success" && result.ResponseCode === "Login successful") {
-        window.location.href = "/dashboard.php";
-      } else {
-        displayValidationMessage(
-          result.ResponseCode || "Fehler bei der Registrierung."
-        );
-      }
-    } catch (error) {
-      console.error("Error during login request:", error);
-      displayValidationMessage(
-        "Ein Fehler ist aufgetreten. Bitte versuche es später erneut."
-      );
-    } finally {
-      // Re-enable the form and hide loading indicator
-      submitButton.disabled = false;
+    // Handle successful registration (e.g., redirect or display success message)
+    if (result.status === "success" && result.ResponseCode === "Login successful") {
+      window.location.href = "/dashboard.php";
+    } else {
+      displayValidationMessage(result.ResponseCode || "Fehler bei der Registrierung.");
     }
-  });
+  } catch (error) {
+    console.error("Error during login request:", error);
+    displayValidationMessage("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
+  } finally {
+    // Re-enable the form and hide loading indicator
+    submitButton.disabled = false;
+  }
+});

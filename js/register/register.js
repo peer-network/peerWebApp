@@ -28,7 +28,7 @@ async function registerUser(email, password, username) {
 
   try {
     // API-Anfrage an den GraphQL-Server
-    const response = await fetch("https://getpeer.eu/graphql", {
+    const response = await fetch("https://peer-network.eu/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,10 +50,7 @@ async function registerUser(email, password, username) {
 
     // Erfolgreiche Registrierung
     if (result.data.register.status === "success") {
-      console.log(
-        "Registrierung erfolgreich! Benutzer-ID:",
-        result.data.register.userid
-      );
+      console.log("Registrierung erfolgreich! Benutzer-ID:", result.data.register.userid);
       // Benutzer nach erfolgreicher Registrierung verifizieren
       verifyUser2(result.data.register.userid);
     }
@@ -69,42 +66,40 @@ async function registerUser(email, password, username) {
 }
 
 // Event-Listener für das Registrierungsformular, der ausgelöst wird, wenn das Formular abgeschickt wird
-document
-  .getElementById("registerForm")
-  .addEventListener("submit", async function (event) {
-    event.preventDefault(); // Verhindern des Standardverhaltens des Formulars (Seiten-Reload)
+document.getElementById("registerForm").addEventListener("submit", async function (event) {
+  event.preventDefault(); // Verhindern des Standardverhaltens des Formulars (Seiten-Reload)
 
-    // Abrufen der Eingabewerte für Benutzername, E-Mail, Passwort und Passwort-Bestätigung
-    const username = document.getElementById("username").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirm_password").value;
+  // Abrufen der Eingabewerte für Benutzername, E-Mail, Passwort und Passwort-Bestätigung
+  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirm_password").value;
 
-    // Passwortvalidierung
-    const passwordMinLength = 8; // Mindestlänge des Passworts
-    const passwordRegex = /^(?=.*[A-Z]).+$/; // Muss mindestens einen Großbuchstaben enthalten
+  // Passwortvalidierung
+  const passwordMinLength = 8; // Mindestlänge des Passworts
+  const passwordRegex = /^(?=.*[A-Z]).+$/; // Muss mindestens einen Großbuchstaben enthalten
 
-    // Überprüfung, ob das Passwort die Mindestlänge erfüllt
-    if (password.length < passwordMinLength) {
-      info("Das Passwort muss mindestens 8 Zeichen lang sein!");
-      return;
-    }
+  // Überprüfung, ob das Passwort die Mindestlänge erfüllt
+  if (password.length < passwordMinLength) {
+    info("Das Passwort muss mindestens 8 Zeichen lang sein!");
+    return;
+  }
 
-    // Überprüfung, ob das Passwort einen Großbuchstaben enthält
-    if (!passwordRegex.test(password)) {
-      info("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
-      return;
-    }
+  // Überprüfung, ob das Passwort einen Großbuchstaben enthält
+  if (!passwordRegex.test(password)) {
+    info("Das Passwort muss mindestens einen Großbuchstaben enthalten!");
+    return;
+  }
 
-    // Überprüfung, ob die Passwörter übereinstimmen
-    if (password !== confirmPassword) {
-      info("Passwörter stimmen nicht überein!");
-      return;
-    }
+  // Überprüfung, ob die Passwörter übereinstimmen
+  if (password !== confirmPassword) {
+    info("Passwörter stimmen nicht überein!");
+    return;
+  }
 
-    // Registrierung des Benutzers, nachdem die Validierungen bestanden wurden
-    await registerUser(email, password, username);
-  });
+  // Registrierung des Benutzers, nachdem die Validierungen bestanden wurden
+  await registerUser(email, password, username);
+});
 
 // Asynchrone Funktion, um einen Benutzer nach der Registrierung zu verifizieren
 async function verifyUser2(userid) {
@@ -119,7 +114,7 @@ async function verifyUser2(userid) {
 `;
 
   // API-Anfrage an den GraphQL-Server
-  fetch("https://getpeer.eu/graphql", {
+  fetch("https://peer-network.eu/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
